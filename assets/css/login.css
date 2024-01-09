@@ -1,0 +1,55 @@
+body{
+    background-size: cover;
+    height: 100vh;
+    width: auto;
+}
+
+.login{
+    background-color:rgb(59, 65, 116, 80%)
+}
+
+.login p{
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.login label{
+    color:white;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.login_button{
+    display: inline-block;
+    padding: 3px 7px;
+    font-size: 0.9rem;
+    font-weight: 900;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 20px;
+    color: #fff;
+    background-color: #F35C3D; /* Default background color */
+    border: 1px solid #e34526; /* Default border color */
+
+}
+.login_button:hover {
+    background-color: #ef7a63; /* Hover background color */
+}
+.login_button.alternative{
+    /* Alternative button color */
+    background-color: #FEBF60; /* Default background color */
+    border: 1px solid #febf60b5; /* Default border color */
+    color: black;
+}
+.login_button.alternative:hover {
+    background-color: #f8c880; /* Hover background color */
+}
+
+.logo{
+    background-color:rgb(59, 65, 116, 80%);
+    color: white;
+    font-weight:bolder;
+    font-size: 2.5rem;
+}

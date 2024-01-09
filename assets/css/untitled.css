@@ -1,0 +1,182 @@
+ /* WHOLE PAGE LAYOUT */
+body h1, h2, h3, h4, h5, h6, p, div, span, a, li, ul, ol {
+  margin: 0;
+
+  /* Removes the annoying whitespace that every text has */
+}
+
+.header{
+  background-color: #839CEA;
+}
+
+.header h4{
+  font-size: 1.7rem;
+  color: white;
+  font-weight: 600;
+}
+
+/*Alex:25/12/23 - Make sidebar unscrollable*/
+#sidebar{ 
+  position: fixed;
+  height: 100%;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+@media (min-width: 768px) { /* For display above 768px */
+  /*Alex:25/12/23 - Solve overlay cause by sidebar unscrollable, add padding when sidebar in full width*/
+  #content-wrapper {
+    padding-left: 14rem;
+  }
+
+  /*Alex:25/12/23 - Solve overlay cause by sidebar unscrollable, reduce padding when mini sidebar button toggle*/
+  .sidebar-toggled #content-wrapper {
+    padding-left: 6.5rem;
+  }
+}
+
+/*Alex:25/12/23 - Solve overlay cause by sidebar unscrollable*/
+
+@media (max-width: 768px) { /* For display below 768px */
+  /* Alex: 26/12/23 - Add padding to all container when display is resize lower than 768px with minisize bar visible*/ 
+  .container, .container-fluid, .container-sm, .container-md, .container-lg, .container-xl, .container-xxl {
+    padding-left: 7.5rem;
+  }
+
+  /* Alex: 26/12/23 - Reduce padding to all container when display is resize lower than 768px with minisize bar unvisible*/ 
+  .sidebar-toggled .container, .sidebar-toggled .container-fluid, .sidebar-toggled .container-sm, .sidebar-toggled .container-md, .sidebar-toggled .container-lg, .sidebar-toggled .container-xl, .sidebar-toggled .container-xxl {
+    padding-left: 1.5rem;
+  }
+}
+
+#logout {
+  position: absolute;
+  display: inline-block;
+  bottom: 0;
+  margin-bottom: 30px;
+  /*left: 15px;*/
+  border-radius: 6rem;
+  --bs-btn-font-size: 1.2rem;
+  width: 70%;
+}
+
+
+#label_welcome {
+  /* margin: auto;
+  margin-bottom: 4%; */
+}
+
+.logoH{
+    width: 20px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+/*Alex:25/12/23 - Override CSS for the box :) */
+/*.bg-primary{
+  background-color: #ADBCE7 !important;
+  border-radius: 15px;
+}*/
+
+.bg-gradient-primary {
+  background-color: #3B4174;
+  background-image: linear-gradient(180deg, #3B4174 10%, #3B4174 100%);
+  background-size: cover;
+}
+
+.topbar{
+  height: 5rem;
+}
+
+.fs-3 {
+  font-size: calc(1.5rem + 0.6vw) !important;
+}
+
+.picture{
+  /* Sizes profile picture */
+  width: 10rem;
+  height: auto;
+  padding: 1rem;
+
+}
+
+.bg-lightblue{ /* Added by Ikhwan */
+  background-color: #839CEA;
+}
+
+.white_box {
+  padding: 4px; /* Adjust padding to suit your design */
+  width: 100%;
+  background-color: white;
+  border-radius: 12px;
+  color: black;
+}
+
+@media (max-width: 768px) {
+  .white_box {
+    /* Adjusted styles for larger screens */
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
+
+/*Alex:25/12/23 - Make footer stay bottom when sidebar in full width*/
+.sticky-footer{
+  position: absolute;
+  display: inline-block;
+  bottom: 0;
+  margin-top: auto; 
+  padding-top: 3rem; 
+  background-color: #f8f9fa; 
+  text-align: center;
+  width: calc(100% - 16rem) !important;
+}
+
+/*Alex:26/12/23 - Correct footer width when mini sidebar enable*/
+.sidebar-toggled .sticky-footer{
+  position: absolute;
+  display: inline-block;
+  bottom: 0;
+  margin-top: auto; 
+  padding-top: 3rem; 
+  background-color: #f8f9fa; 
+  text-align: center;
+  width: calc(100% - 6.5rem) !important;
+}
+
+/*Alex:25/12/23 - Make text bolder*/
+#textCont{
+  font-weight: 700;
+}
+
+/*Alex:26/12/23 - Change text color*/
+#fw-bold-over{
+  color: #000000;
+}
+
+.clickable{
+  /* Ikhwan 28/12/2023 */
+  /* Somehow this doesnt work ?? */
+  cursor: pointer;
+}
+/* Syafiq 29/12/2023 */
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+/* Syafiq 29/12/2023 */
+#select-all {
+  padding: 10px 20px;
+  background-color: #3B4174;
+  border: none;
+  font-size: 14px;
+  
+}
+
+
+.carousel-indicators{
+  /* IKHWAN 8-JAN-2024 */
+  /* Fix Carousel indicator hidden */
+  position: relative;
+  bottom: -10px;
+}
