@@ -1,21 +1,17 @@
 <?php
-
-session_start();    
-include '../config.php';
-// Check if the form has been submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+function printDetails($data) {
     // Retrieve the form data
-    $name = isset($_POST['name']) ? $_POST['name'] : '';
-    $email = isset($_POST['email']) ? $_POST['email'] : '';
-    $contact = isset($_POST['contact']) ? $_POST['contact'] : '';
-    $address1 = isset($_POST['address1']) ? $_POST['address1'] : '';
-    $postcode = isset($_POST['postcode']) ? $_POST['postcode'] : '';
-    $state = isset($_POST['state']) ? $_POST['state'] : '';
-    $paymentdetail = isset($_POST['paymentdetail']) ? $_POST['paymentdetail'] : '';
-    $subTotal = isset($_POST['subtotal']) ? $_POST['subtotal'] : '';
-    $tax = isset($_POST['tax']) ? $_POST['tax'] : ''; 
-    $serviceCharge = isset($_POST['servicecharge']) ? $_POST['servicecharge'] : '';
-    $total = isset($_POST['total']) ? $_POST['total'] : '';
+    $name = isset($data['name']) ? $data['name'] : '';
+    $email = isset($data['email']) ? $data['email'] : '';
+    $contact = isset($data['contact']) ? $data['contact'] : '';
+    $address1 = isset($data['address1']) ? $data['address1'] : '';
+    $postcode = isset($data['postcode']) ? $data['postcode'] : '';
+    $state = isset($data['state']) ? $data['state'] : '';
+    $paymentdetail = isset($data['paymentdetail']) ? $data['paymentdetail'] : '';
+    $subTotal = isset($data['subtotal']) ? $data['subtotal'] : '';
+    $tax = isset($data['tax']) ? $data['tax'] : ''; 
+    $serviceCharge = isset($data['servicecharge']) ? $data['servicecharge'] : '';
+    $total = isset($data['total']) ? $data['total'] : '';
 
     // Display the data in an invoice-like format
     echo "<h2>Invoice</h2>";
@@ -32,53 +28,113 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<p><strong>Tax:</strong> $tax</p>";
     echo "<p><strong>Service Charge:</strong> $serviceCharge</p>";
     echo "<p><strong>Total:</strong> $total</p>";
-    
-    // Redirect or display a success message
-    echo '<script>';
-    echo 'alert("Payment Successful.");';
-    echo 'alert("Invoice of the payment has been sent to your email.");';
-    echo '</script>';
-
-    // Assuming you have a valid database connection in $conn
-    if ($conn) {
-        // Initialize an array to store p_ids
-        $extracted_ids = array();
-
-        // Use regular expression to match and extract p_ids
-        preg_match_all('/ID: (\d+)/', $paymentdetail, $matches);
-
-        // Check if matches were found
-        if (isset($matches[1])) {
-            // Add extracted p_ids to the array
-            $extracted_ids = $matches[1];
-
-            // Loop through each extracted p_id and update the corresponding row in the database
-            foreach ($extracted_ids as $target_p_id) {
-                $query = "UPDATE parentpayment SET p_status = 'Pending' WHERE p_id = ?";
-                $stmt = mysqli_prepare($conn, $query);
-
-                if ($stmt) {
-                    mysqli_stmt_bind_param($stmt, 'i', $target_p_id);
-                    mysqli_stmt_execute($stmt);
-
-                    mysqli_stmt_close($stmt);
-                } else {
-                    echo "Error: " . mysqli_error($conn);
-                }
-            }
-        }
-
-        // Close the database connection
-        mysqli_close($conn);
-    }
-
-    
-    // Optionally, you can include a back button or a link to redirect the user
-    echo '<a href="payment.php">Back</a>';
-} else {
-    // If the form hasn't been submitted, display an error or redirect
-    echo "Error: Form data not submitted.";
-    echo '<a href="javascript:history.back()">Back</a>';
-    // You may want to add a redirect header or additional error handling.
 }
+
+session_start();
+$invoice_details = $_SESSION['invoice'];
 ?>
+
+<!-- START OF HTML -->
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>View Profile</title>
+    <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
+    <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="../assets/css/untitled.css">
+
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <!-- Include using php -->
+        <?php include('sidemenu.php'); ?>
+
+
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+
+                <!-- HEADER -->
+                <nav class="navbar navbar-expand bg-white shadow mb-4 topbar static-top navbar-light">
+                    <div class="container-fluid header"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
+                        <i class="fas fa-bars"></i></button>
+                        <label class="form-label fs-3 text-nowrap" id="label_welcome">
+                            <br><h4>Payment</h4></label>
+                    </div>
+                </nav>
+
+                <!-- MAIN CONTENT -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="
+                            p-3
+                            col bg-light 
+                            d-flex-inline 
+                            justify-content-center 
+                            align-items-center 
+                            text-center
+                            border border-success
+                            ">
+                                <div class="col d-flex-inline align-items-center justify-content-center mt-3">
+                                    <img src="..\assets\img\checkmark-xxl.png" alt="Checkmark" style="width: 30px; height: auto;" class="mb-1">
+                                    <h3 class="text-success fw-bold fs-2 mt-2">Payment Successful</h3>
+                                </div>
+
+                                <div class="col mt-2">
+                                    <p>
+                                        We have received your payment successfully. An invoice is also sent to your E-mail.
+                                    </p>
+                                    <p>
+                                        Any Inquiries please contact <strong>Admin @ TASKA UNIMAS</strong>
+                                    </p>
+                                </div>
+
+                                <div class="mt-4">
+                                    <button class="btn btn-primary me-2" onclick="window.location.href='payment.php'">Back</button>
+                                    <!-- Use the appropriate function or link for viewing the receipt -->
+                                    <button class="btn btn-success text-white" onclick="viewReceipt(<?php echo $_SESSION['invoice_id']; ?>)">View Receipt</button>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
+            <footer class="bg-white sticky-footer">
+                <div class="container my-auto">
+                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
+                </div>
+            </footer>
+        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script>
+        function viewReceipt(invoiceID) {
+            // Create a form element
+            var form = document.createElement('form');
+            form.action = '../generateInvoice.php'; // Replace with the actual path
+            form.method = 'post';
+
+            // Create a hidden input field for 'invoiceID'
+            var inputInvoiceID = document.createElement('input');
+            inputInvoiceID.type = 'hidden';
+            inputInvoiceID.name = 'invoiceID';
+            inputInvoiceID.value = invoiceID;
+            form.appendChild(inputInvoiceID);
+
+            // Append the form to the document body
+            document.body.appendChild(form);
+
+            // Submit the form
+            form.submit();
+        }
+    </script>
+</body>
+
+</html>

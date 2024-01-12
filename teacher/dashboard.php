@@ -8,7 +8,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
         die("Connection failed: " . mysqli_connect_error());
     }
 
-    $query = "SELECT * FROM children WHERE c_username = ?";
+    $query = "SELECT * FROM teacher WHERE t_username = ?";
     $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt) {
@@ -20,15 +20,15 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
             if (mysqli_num_rows($result) > 0) {
                 $user_data = mysqli_fetch_assoc($result);
             } else {
-                echo "Error! 1";
+                echo "Error!.";
             }
         } else {
-            echo "Error! 2" . mysqli_error($conn);
+            echo "Error!" . mysqli_error($conn);
         }
 
         mysqli_stmt_close($stmt);
     } else {
-        echo "Error! 3" . mysqli_error($conn);
+        echo "Error!" . mysqli_error($conn);
     }
 
     mysqli_close($conn);
@@ -46,23 +46,22 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
     <link rel="stylesheet" href="../assets/css/untitled.css">
-
 </head>
 
 <body id="page-top">
     <div id="wrapper">
         <!-- Include using php -->
         <?php include('sidemenu.php'); ?>
-
+        
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
-                
+
                 <!-- HEADER -->
                 <nav class="navbar navbar-expand bg-white shadow mb-4 topbar static-top navbar-light">
                     <div class="container-fluid header"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
                         <i class="fas fa-bars"></i></button>
                         <label class="form-label fs-3 text-nowrap" id="label_welcome">
-                            <br><h4>My Profile : <span><?= $user_data['c_name'] ?></span></h4></label>
+                            <br><h4>My Profile : <span><?= $user_data['t_name']?></span></h4></label>
                     </div>
                 </nav>
 
@@ -75,7 +74,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                             <div class="row">
                             <!-- COPY THIS ROW DIV TO CREATE NEW BOX -->
                                 <div class="col-lg-12 col-xl-12 mb-4">
-                                    <div class="card text-white bg-primary shadow">
+                                    <div class="card text-white bg-primary shadow text-black">
                                         <div class="container p-2">
                                             <div class="row m-0" id="textCont"> <!-- Alex:25/10/23: Add ID -->
 
@@ -93,13 +92,13 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                     <div class="row m-0 p-1">
                                                         <!-- Left column for type of information -->
                                                         <div class="text-nowrap text-center col-sm-2 col-md-2 d-flex justify-content-center align-items-center">
-                                                            <p>Child's ID</p>
+                                                            <p>Roles</p>
                                                         </div>
     
                                                         <!-- Right column for corresponding information -->
                                                         <div class="col-sm-10 col-md-10 d-flex gx-0 justify-content-center align-items-center text-center">
                                                             <div class="white_box">
-                                                                <span><?= $user_data['c_registerID']?></span>
+                                                                <span><?= $user_data['t_role']?></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -114,22 +113,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                         <!-- Right column for corresponding information -->
                                                         <div class="col-sm-10 col-md-10 d-flex gx-0 justify-content-center align-items-center text-center">
                                                             <div class="white_box">
-                                                                <span><?= $user_data['c_name']?></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-    
-                                                    <!-- AGE -->
-                                                    <div class="row m-0 p-1">
-                                                        <!-- Left column for type of information -->
-                                                        <div class="text-nowrap text-center col-sm-2 col-md-2 d-flex justify-content-center align-items-center">
-                                                            <p>Age</p>
-                                                        </div>
-    
-                                                        <!-- Right column for corresponding information -->
-                                                        <div class="col-sm-10 col-md-10 d-flex gx-0 justify-content-center align-items-center text-center">
-                                                            <div class="white_box">
-                                                                <span><?= $user_data['c_age']?></span>
+                                                                <span><?= $user_data['t_name']?></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -138,13 +122,13 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                     <div class="row m-0 p-1">
                                                         <!-- Left column for type of information -->
                                                         <div class="text-nowrap text-center col-sm-2 col-md-2 d-flex justify-content-center align-items-center">
-                                                            <p>Enrollment Date</p>
+                                                            <p>Phone Num.</p>
                                                         </div>
     
                                                         <!-- Right column for corresponding information -->
                                                         <div class="col-sm-10 col-md-10 d-flex gx-0 justify-content-center align-items-center text-center">
                                                             <div class="white_box">
-                                                                <span><?= $user_data['c_enrollmentDate']?></span>
+                                                                <span><?= $user_data['t_noPhone']?></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -177,7 +161,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                           <div class="carousel-item active">
                                                             <img src="..\assets\img\timetables\jadual1.jpg" class="d-block w-100" alt="...">
                                                           </div>
-                                                          <?php if ($user_data['c_program'] == "Under Age 1" || $user_data['c_program'] == "Age 2"): ?>
+                                                          <?php if ($user_data['t_program'] == "Under Age 1" || $user_data['t_program'] == "Age 2"): ?>
                                                             <div class="carousel-item active">
                                                                 <img src="..\assets\img\timetables\jadual2.jpg" class="d-block w-100" alt="...">
                                                             </div>
@@ -185,7 +169,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                           <!-- <div class="carousel-item">
                                                             <img src="..\assets\img\timetables\jadual2.jpg" class="d-block w-100" alt="...">
                                                           </div> -->
-                                                          <?php if ($user_data['c_program'] == "Age 3" || $user_data['c_program'] == "Age 4"): ?>
+                                                          <?php if ($user_data['t_program'] == "Age 3" || $user_data['t_program'] == "Age 4"): ?>
                                                             <div class="carousel-item active">
                                                                 <img src="..\assets\img\timetables\jadual3.jpg" class="d-block w-100" alt="...">
                                                             </div>
@@ -219,6 +203,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                     </div>
 
                                                 </div>
+
                                     </div>
                                 </div>
                             </div>

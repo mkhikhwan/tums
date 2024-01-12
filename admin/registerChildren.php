@@ -134,22 +134,10 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
 <body id="page-top">
     <div id="wrapper">
-        <nav class="navbar align-items-start sidebar sidebar-dark accordion bg-gradient-primary navbar-dark" id="sidebar"> <!-- Alex:25/12/23: Add ID -->
-            <div class="container-fluid d-flex flex-column p-0" ><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#" style="font-size: larger;">
-                    
-                    <div class="sidebar-brand-text mx-3"><span id="sidebar_label">taska unimas</span></div>
-                </a>
-                <hr class="sidebar-divider my-0">
-                <ul class="navbar-nav text-light mr-auto" id="accordionSidebar">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.php"><img class="logoH" src="..\assets\img\icons\home.png" alt=""></i><span>HOME</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="manageChildren.php"><img class="logoH" src="..\assets\img\icons\student.png" alt=""></i><span>Manage Children</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="manageTeacher.php"><img class="logoH" src="..\assets\img\icons\Teacher.png" alt=""></i><span>Manage Teachers</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="mentorMentee.php"><img class="logoH" src="..\assets\img\icons\mentor.png" alt=""></i><span>Mentor Mentee</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="viewPayment.php"><img class="logoH" src="..\assets\img\icons\credit-card.png" alt=""></i><span>Payment</span></a></li>
-                </ul>
-                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div><button class="btn btn-primary" id="logout" type="button">Log out</button>
-            </div>
-        </nav>
+        <!-- Include using php -->
+        <?php include('sidemenu.php'); ?>
+
+        
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
 
@@ -330,55 +318,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
         document.addEventListener('DOMContentLoaded', function () {
             autofillForm();
         });
-
-        // DELETE THIS FUNCTION
-        // THIS FUNCTION IS FOR TESTING PURPOSES
-        function autofillForm() {
-            // Replace this object with your data retrieval logic
-            var childData = {
-                c_username: 'JohnDoe',
-                c_password: 'password123',
-                c_email: 'john.doe@example.com',
-                c_registerID: 'C-123',
-                c_age: '5',
-                c_name: 'John Doe',
-                c_enrollmentDate: '2022-01-01',
-                c_gender: 'Male',
-                c_race: 'Caucasian',
-                c_address: '123 Main St',
-                c_birthCertificate: 'BC123456',
-                c_FatherName: 'John Doe Sr.',
-                c_FatherPhoneNo: '123-456-7890',
-                c_MotherName: 'Jane Doe',
-                c_MotherPhoneNo: '987-654-3210',
-                c_UNIMASstaff: 'No',
-                c_Disabilities: 'None',
-                c_Allergies: 'None'
-            };
-
-            // Set values in the form fields
-            document.getElementById('username').value = childData.c_username;
-            document.getElementById('password').value = childData.c_password;
-            document.getElementById('email').value = childData.c_email;
-            document.getElementById('childID').value = childData.c_registerID;
-            document.getElementById('age').value = childData.c_age;
-            document.getElementById('name').value = childData.c_name;
-            document.getElementById('enrollmentDate').value = childData.c_enrollmentDate;
-            document.getElementById('gender').value = childData.c_gender;
-            document.getElementById('race').value = childData.c_race;
-            document.getElementById('address').value = childData.c_address;
-            document.getElementById('birthCertificate').value = childData.c_birthCertificate;
-            document.getElementById('fathersName').value = childData.c_FatherName;
-            document.getElementById('fathersPhone').value = childData.c_FatherPhoneNo;
-            document.getElementById('mothersName').value = childData.c_MotherName;
-            document.getElementById('mothersPhone').value = childData.c_MotherPhoneNo;
-            document.getElementById('unimasStaff').value = childData.c_UNIMASstaff;
-            document.getElementById('disabilities').value = childData.c_Disabilities;
-            document.getElementById('allergies').value = childData.c_Allergies;
-
-            // Optional: Trigger the change event for elements like file input to show the image preview
-            showImagePreview();
-        }
 
         function showImagePreview() {
             // Get the file input element

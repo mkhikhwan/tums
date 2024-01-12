@@ -10,15 +10,16 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
         die("Connection failed: " . mysqli_connect_error());
     }
 
+    $user_data = getChildData($conn, $selectChildID);
+    $profilePicture = loadImage($conn, $selectChildID);
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        modifyChildData($conn, $selectChildID);
+        modifyChildData($conn, $selectChildID, $user_data['c_username']);
 
         // Redirect to the same page using GET to avoid resubmission
-        header("Location: " . $_SERVER['PHP_SELF']);
+        header("Location: manageChildren.php");
         exit();
     }
-
-    $user_data = getChildData($conn, $selectChildID);
 
     mysqli_close($conn);
 } else {
@@ -56,7 +57,7 @@ function getChildData($conn, $childID) {
     return null;
 }
 
-function modifyChildData($conn, $childID) {
+function modifyChildData($conn, $childID, $username) {
     // Modify Child data
     // By Aina
     // Modified by Ikhwan 04-Jan-2024
@@ -76,36 +77,99 @@ function modifyChildData($conn, $childID) {
     $UNIMASstaff = mysqli_real_escape_string($conn, $_POST['c_UNIMASstaff']);
     $Disabilities = mysqli_real_escape_string($conn, $_POST['c_Disabilities']);
     $Allergies = mysqli_real_escape_string($conn, $_POST['c_Allergies']);
+    
+    //Upload image - ikhwan 03-01-2023
+    // $targetDir = "../data/img/children/";
+    $profilePicture = $username . ".png";
+    // if (isset($_FILES["c_profilePicture"]) && $_FILES["c_profilePicture"]["error"] == 0) {
+    //     // Get the original filename
+    //     $original_filename = basename($_FILES["c_profilePicture"]["name"]);
 
+    //     // Extract the file extension
+    //     $file_extension = pathinfo($original_filename, PATHINFO_EXTENSION);
+
+    //     // Use username and file extension as the filename
+    //     $new_filename = $username . '.' . $file_extension;
+    //     $profilePicture = $new_filename;
+
+    //     $target_file = $targetDir . $new_filename;
+
+    //     // Check if the file already exists
+    //     if (file_exists($target_file)) {
+    //         // Delete the existing file
+    //         unlink($target_file);
+
+    //         // Move the uploaded file to the specified directory
+    //         if (move_uploaded_file($_FILES["c_profilePicture"]["tmp_name"], $target_file)) {
+    //             $profilePicture = $new_filename;
+    //             $imageError = "The file " . htmlspecialchars($new_filename) . " has been replaced and uploaded.";
+    //         } else {
+    //             $imageError = "Sorry, there was an error uploading your file.";
+    //         }
+    //     } else {
+    //         // Move the uploaded file to the specified directory
+    //         if (move_uploaded_file($_FILES["c_profilePicture"]["tmp_name"], $target_file)) {
+    //             $profilePicture = $new_filename;
+    //             $imageError = "The file " . htmlspecialchars($new_filename) . " has been uploaded.";
+    //         } else {
+    //             $imageError = "Sorry, there was an error uploading your file.";
+    //         }
+    //     }
+    // } else {
+    //     $imageError = "Error: " . $_FILES["c_profilePicture"]["error"];
+    // }
+    
     // Query to edit the table "children"
     $query = "UPDATE children SET
         c_registerID=?, c_name=?, c_age=?, c_enrollmentDate=?, c_gender=?, c_race=?,
         c_address=?, c_birthCertificate=?, c_FatherName=?, c_FatherPhoneNo=?,
-        c_MotherName=?, c_MotherPhoneNo=?, c_UNIMASstaff=?, c_Disabilities=?, c_Allergies=?
+        c_MotherName=?, c_MotherPhoneNo=?, c_UNIMASstaff=?, c_Disabilities=?, c_Allergies=?,
+        c_profilePicture=?  -- Add the column for profile picture here
         WHERE c_id=?";
-    
+        
     $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, 'ssisssssssssssss', 
+        mysqli_stmt_bind_param($stmt, 'ssissssssssssssss', 
             $registerID, $name, $age, $enrollmentDate, $gender, $race,
             $address, $birthCertificate, $FatherName, $FatherPhoneNo,
-            $MotherName, $MotherPhoneNo, $UNIMASstaff, $Disabilities, $Allergies, $childID);
+            $MotherName, $MotherPhoneNo, $UNIMASstaff, $Disabilities, $Allergies, $profilePicture, $childID);
 
         $success = mysqli_stmt_execute($stmt);
 
         // Add custom message
         // Ikhwan 04-01-2024
         if ($success) {
-            $_SESSION['modify_message'] = "Modify successful";
+            $_SESSION['message'] = "Modify successful";
+            $_SESSION['message_type'] = 'success';
         } else {
-            $_SESSION['modify_message'] = "Error modifying child data: " . mysqli_error($conn);
+            $_SESSION['message'] = "Error modifying child data: " . mysqli_error($conn);
+            $_SESSION['message_type'] = 'warning';
         }
 
         mysqli_stmt_close($stmt);
     } else {
         echo '<script>alert("Error! ' . mysqli_error($conn) . '");</script>';
     }
+}
+
+function loadImage($conn, $id) {
+    // Simple function to get image filename from database
+    $profilePicture = "";
+
+    $sql = "SELECT c_profilePicture FROM children WHERE c_id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $id);  // Change "i" to "s" for a string
+    $stmt->execute();
+    $stmt->bind_result($profilePicture);
+
+    $stmt->fetch();
+
+    $stmt->close();
+
+    // If $profilePicture is null, return an empty string
+    return ($profilePicture !== null) ? $profilePicture : "";
 }
 ?>
 
@@ -124,22 +188,10 @@ function modifyChildData($conn, $childID) {
 
 <body id="page-top">
     <div id="wrapper">
-        <nav class="navbar align-items-start sidebar sidebar-dark accordion bg-gradient-primary navbar-dark" id="sidebar"> <!-- Alex:25/12/23: Add ID -->
-            <div class="container-fluid d-flex flex-column p-0" ><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#" style="font-size: larger;">
-                    
-                    <div class="sidebar-brand-text mx-3"><span id="sidebar_label">taska unimas</span></div>
-                </a>
-                <hr class="sidebar-divider my-0">
-                <ul class="navbar-nav text-light mr-auto" id="accordionSidebar">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.php"><img class="logoH" src="..\assets\img\icons\home.png" alt=""></i><span>HOME</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="manageChildren.php"><img class="logoH" src="..\assets\img\icons\student.png" alt=""></i><span>Manage Children</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="manageTeacher.php"><img class="logoH" src="..\assets\img\icons\Teacher.png" alt=""></i><span>Manage Teachers</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="mentorMentee.php"><img class="logoH" src="..\assets\img\icons\mentor.png" alt=""></i><span>Mentor Mentee</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="viewPayment.php"><img class="logoH" src="..\assets\img\icons\credit-card.png" alt=""></i><span>Payment</span></a></li>
-                </ul>
-                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div><button class="btn btn-primary" id="logout" type="button">Log out</button>
-            </div>
-        </nav>
+        <!-- Include using php -->
+        <?php include('sidemenu.php'); ?>
+
+        
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
 
@@ -196,6 +248,11 @@ function modifyChildData($conn, $childID) {
                                                     <div class="form-group col-md-6 mt-3">
                                                         <label for="profilePicture">Profile Picture:</label>
                                                         <input type="file" class="form-control-file" id="c_profilePicture" name="c_profilePicture" placeholder="Upload Profile Picture" onchange="showImagePreview()">
+                                                    </div>
+
+                                                    <!-- Display assigned profile picture -->
+                                                    <div class="col-2 mt-3" id="imageDisplayContainer">
+                                                        <img src="../data/img/children/<?php echo $profilePicture ?>" id="imageDisplay" class="img-fluid" alt="Image Display">
                                                     </div>
 
                                                     <!-- Image preview container -->
@@ -311,9 +368,9 @@ function modifyChildData($conn, $childID) {
                 c_address: '<?php echo $user_data['c_address']; ?>',
                 c_birthCertificate: '<?php echo $user_data['c_birthCertificate']; ?>',
                 c_FatherName: '<?php echo $user_data['c_FatherName']; ?>',
-                c_FatherPhoneNo: '<?php echo $user_data['c_FatherPhoneNo']; ?>',
+                c_FatherPhoneNo: '<?php echo '0' . $user_data['c_FatherPhoneNo']; ?>',
                 c_MotherName: '<?php echo $user_data['c_MotherName']; ?>',
-                c_MotherPhoneNo: '<?php echo $user_data['c_MotherPhoneNo']; ?>',
+                c_MotherPhoneNo: '<?php echo '0' . $user_data['c_MotherPhoneNo']; ?>',
                 c_UNIMASstaff: '<?php echo $user_data['c_UNIMASstaff']; ?>',
                 c_Disabilities: '<?php echo $user_data['c_Disabilities']; ?>',
                 c_Allergies: '<?php echo $user_data['c_Allergies']; ?>',
@@ -341,27 +398,32 @@ function modifyChildData($conn, $childID) {
         });
 
         function showImagePreview() {
-            // Get the file input element
-            var input = document.getElementById('profilePicture');
-
-            // Get the image preview container and image element
+            var input = document.getElementById('c_profilePicture');
+            var imageDisplayContainer = document.getElementById('imageDisplayContainer');
+            var imageDisplay = document.getElementById('imageDisplay');
             var imagePreviewContainer = document.getElementById('imagePreviewContainer');
             var imagePreview = document.getElementById('imagePreview');
-
-            // Display the image preview container
-            imagePreviewContainer.style.display = 'block';
 
             // Check if a file is selected
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
 
-                // Set the image source when the file is loaded
+                // Set up a callback for when the image is loaded
                 reader.onload = function (e) {
-                    imagePreview.src = e.target.result;
+                    // Display the selected image in the image display container
+                    imageDisplay.src = e.target.result;
+                    
+                    // Show the image display container and hide the image preview container
+                    imageDisplayContainer.style.display = 'block';
+                    imagePreviewContainer.style.display = 'none';
                 };
 
-                // Read the file as a data URL
+                // Read the selected file as a data URL
                 reader.readAsDataURL(input.files[0]);
+            } else {
+                // If no file is selected, hide both containers
+                imageDisplayContainer.style.display = 'none';
+                imagePreviewContainer.style.display = 'none';
             }
         }
 

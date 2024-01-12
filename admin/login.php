@@ -101,12 +101,12 @@ function test_input($data) {
                                 ?>
                                 
                                 <div class="text-center p-2">
-                                    <input type="button" value="Login as Parent" class="login_button alternative w-100">
+                                <a href="../parent/login.php" class="login_button alternative w-100">Login as Parent</a>
                                 </div>
 
                         
                                 <div class="text-center p-2">
-                                    <input type="button" value="Login as Teacher" class="login_button alternative w-100">
+                                <a href="../teacher/login.php" class="login_button alternative w-100">Login as Teacher</a>
                                 </div>
                             </div>
                         </div>

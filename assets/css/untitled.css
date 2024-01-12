@@ -101,7 +101,7 @@ body h1, h2, h3, h4, h5, h6, p, div, span, a, li, ul, ol {
 }
 
 .bg-lightblue{ /* Added by Ikhwan */
-  background-color: #839CEA;
+  background-color: #ADBCE7;
 }
 
 .white_box {
@@ -173,10 +173,8 @@ input[type="checkbox"] {
   
 }
 
-
-.carousel-indicators{
-  /* IKHWAN 8-JAN-2024 */
-  /* Fix Carousel indicator hidden */
-  position: relative;
-  bottom: -10px;
+/*Alex 10.1.24 - Fix Carousel Image Width, Make arrow left,right and bottom indicator visible*/
+.carousel-inner {
+  width: 80% !important;
+  margin: auto auto 40px auto !important;
 }

@@ -1,9 +1,9 @@
 <?php
 
 $servername = "localhost";
-$username = "root";
-$password = "";
-$database = "virtutech"; //taskaUNIMAS
+$username = "u462586686_tums_admin";
+$password = "Tums@1234567890";
+$database = "u462586686_TUMSDB"; //taskaUNIMAS
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database);

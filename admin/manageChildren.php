@@ -48,22 +48,10 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
 <body id="page-top">
     <div id="wrapper">
-        <nav class="navbar align-items-start sidebar sidebar-dark accordion bg-gradient-primary navbar-dark" id="sidebar"> <!-- Alex:25/12/23: Add ID -->
-            <div class="container-fluid d-flex flex-column p-0" ><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#" style="font-size: larger;">
-                    
-                    <div class="sidebar-brand-text mx-3"><span id="sidebar_label">taska unimas</span></div>
-                </a>
-                <hr class="sidebar-divider my-0">
-                <ul class="navbar-nav text-light mr-auto" id="accordionSidebar">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.php"><img class="logoH" src="..\assets\img\icons\home.png" alt=""></i><span>HOME</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="manageChildren.php"><img class="logoH" src="..\assets\img\icons\student.png" alt=""></i><span>Manage Children</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="manageTeacher.php"><img class="logoH" src="..\assets\img\icons\Teacher.png" alt=""></i><span>Manage Teachers</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="mentorMentee.php"><img class="logoH" src="..\assets\img\icons\mentor.png" alt=""></i><span>Mentor Mentee</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="viewPayment.php"><img class="logoH" src="..\assets\img\icons\credit-card.png" alt=""></i><span>Payment</span></a></li>
-                </ul>
-                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div><button class="btn btn-primary" id="logout" type="button">Log out</button>
-            </div>
-        </nav>
+        <!-- Include using php -->
+        <?php include('sidemenu.php'); ?>
+
+        
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
 
@@ -80,7 +68,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12 mb-2">
-                            <a href='registerChildren.php' class="btn btn-primary">Register Child</a>
+                            <a href='registerChildren.php' class="btn btn-primary">Register New Child</a>
                         </div>
                     </div>
                     <div class="row">
@@ -103,7 +91,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                             </div>
                                             
                                             <?php foreach ($item_data as $index => $child): ?>
-                                                <div class="row m-0 mt-1 white_box" data-childname="<?= $child['c_name'] ?>" data-id="<?= $child['c_id'] ?>">
+                                                <div class="row m-0 mt-1 white_box" data-id="<?= $child['c_id'] ?>">
                                                     <div class="col-2"><?= $index + 1 ?></div>
                                                     <div class="col-7"><?= $child['c_name'] ?></div>
                                                     <div class="col-3 d-inline-flex justify-content-end align-items-center">
@@ -145,10 +133,10 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                 var searchValue = String($(this).val()).toLowerCase();
         
                 $('.white_box').each(function() {
-                var childName = String($(this).data('childname')).toLowerCase();
+                var childid = String($(this).data('id')).toLowerCase();
                 
                 //Hide div that doesnt have similar data-tag   
-                if (childName.includes(searchValue)) {
+                if (childid.includes(searchValue)) {
                     $(this).show();
                 } else {
                     $(this).hide();
@@ -163,9 +151,9 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
                 // Iterate over each checked checkbox
                 $('.white_box input[type="checkbox"]:checked').each(function() {
-                    // Get the data-childname attribute value
-                    var childName = $(this).closest('.white_box').data('childname');
-                    selectedItems.push(childName);
+                    // Get the data-childid attribute value
+                    var childid = $(this).closest('.white_box').data('id');
+                    selectedItems.push(childid);
                 });
 
                 // Show a confirmation box
@@ -179,12 +167,11 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                         url: 'deleteChild.php',
                         data: { selectedItems: selectedItems },
                         success: function(response) {
-                            // console.log(response);
                             alert("Selected items deleted successfully.");
-                            location.reload();
+                            console.log(response);
+                            // location.reload();
                         },
                         error: function(error) {
-                            // console.error('Error:', error);
                             alert("Error deleting selected items.");
                         }
                     });

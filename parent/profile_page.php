@@ -1,8 +1,6 @@
-<?php
-session_start();
+<?php    
+session_start();    
 include '../config.php';
-
-$mentee_name = $_GET['name'];
 
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
@@ -10,40 +8,59 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
         die("Connection failed: " . mysqli_connect_error());
     }
 
-
-    // query by ikhwan 28/12/2023
-    $query="SELECT * FROM children WHERE c_name = ?";
-
+    $query = "SELECT * FROM children WHERE c_username = ?";
     $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, 's', $mentee_name);
+        mysqli_stmt_bind_param($stmt, 's', $_SESSION['username']);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
 
         if ($result) {
             if (mysqli_num_rows($result) > 0) {
                 $user_data = mysqli_fetch_assoc($result);
-
-                // DEBUGGING PURPOSES. THIS JUST PRINTS THE RESULT INTO CONSOLE LOG
-                // $user_data_json = json_encode($user_data);
-                // echo '<script>console.log("User Data:", ' . $user_data_json . ');</script>';
             } else {
-                echo "";
+                echo "Error!. 1";
             }
         } else {
-            echo "Error! " . mysqli_error($conn);
+            echo "Error!" . mysqli_error($conn);
         }
 
         mysqli_stmt_close($stmt);
     } else {
-        echo "Error! " . mysqli_error($conn);
+        echo "Error!" . mysqli_error($conn);
+    }
+
+    $query2="SELECT t.t_name FROM mentormentee mt 
+        JOIN teacher t on mt.MentorID = t.t_id 
+        JOIN children c ON mt.MenteeID = c.c_id 
+        WHERE c.c_username = ? ";
+
+    $stmt2 = mysqli_prepare($conn, $query2);
+
+    if ($stmt2) {
+        mysqli_stmt_bind_param($stmt2, 's', $_SESSION['username']);
+        mysqli_stmt_execute($stmt2);
+        $result2 = mysqli_stmt_get_result($stmt2);
+
+        if ($result2) {
+            if (mysqli_num_rows($result2) > 0) {
+                $user_data2 = mysqli_fetch_assoc($result2);
+            } else {
+                echo "Error!.";
+            }
+        } else {
+            echo "Error!" . mysqli_error($conn);
+        }
+
+        mysqli_stmt_close($stmt2);
+    } else {
+        echo "Error!" . mysqli_error($conn);
     }
 
     mysqli_close($conn);
 } else {
-    // IF NOT LOGGED IN, redirect to login page
-    header('Location: loginTeacher.php');
+    header('Location: login.php');
     exit();
 }
 ?>
@@ -311,7 +328,21 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <!-- Row for Mentor -->
+                                            <div class="row m-0 p-1">
+                                                <div class="text-nowrap text-center col-sm-2 col-md-2 d-flex justify-content-center align-items-center">
+                                                    <p>Mentor</p>
+                                                </div>
+                                                <div class="col-sm-10 col-md-10 d-flex gx-0 justify-content-center align-items-center text-center">
+                                                    <div class="white_box">
+                                                        <span><?= $user_data2['t_name']?></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
+
                                     </div>
                                 </div>
                             </div>

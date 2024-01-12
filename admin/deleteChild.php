@@ -9,18 +9,40 @@ if (!$conn) {
 
 // Check if the selectedItems are received
 if (isset($_POST['selectedItems']) && is_array($_POST['selectedItems'])) {
-    // Loop through the selectedItems and delete corresponding records
-    foreach ($_POST['selectedItems'] as $childName) {
-        $escapedChildName = mysqli_real_escape_string($conn, $childName);
-        $query = "DELETE FROM children WHERE c_name = '$escapedChildName'";
+    print_r($_POST['selectedItems']);
 
-        // Execute the query
-        if (mysqli_query($conn, $query)) {
+    foreach ($_POST['selectedItems'] as $ChildID) {
+        $escapedChildID = mysqli_real_escape_string($conn, $ChildID);
+
+
+        // Retrieve the filename of the profile picture
+        $filenameQuery = "SELECT c_profilePicture FROM children WHERE c_id='$escapedChildID'";
+        $filenameResult = mysqli_query($conn, $filenameQuery);
+
+        if ($filenameResult && mysqli_num_rows($filenameResult) > 0) {
+            $row = mysqli_fetch_assoc($filenameResult);
+            $profilePictureFilename = $row['c_profilePicture'];
+
+            // Delete the profile picture file
+            $profilePicturePath = "../data/img/children/" . $profilePictureFilename;
+            if (file_exists($profilePicturePath)) {
+                unlink($profilePicturePath);
+                echo "Profile picture for $escapedChildID deleted successfully.\n";
+            } else {
+                echo "Profile picture for $escapedChildID not found.\n";
+            }
+        } else {
+            echo "Error retrieving profile picture filename for $escapedChildID: " . mysqli_error($conn) . "\n";
+        }
+
+        // Delete the record from the database
+        $deleteQuery = "DELETE FROM children WHERE c_id = '$escapedChildID'";
+        if (mysqli_query($conn, $deleteQuery)) {
             // Success, you can handle the response if needed
-            echo "Record for $escapedChildName deleted successfully.\n";
+            echo "Record for $escapedChildID deleted successfully.\n";
         } else {
             // Error, you can handle the error response
-            echo "Error deleting record for $escapedChildName: " . mysqli_error($conn) . "\n";
+            echo "Error deleting record for $escapedChildID: " . mysqli_error($conn) . "\n";
         }
     }
 } else {

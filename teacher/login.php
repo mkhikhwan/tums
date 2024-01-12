@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['logged_in'] = true;
             $userData = $result->fetch_assoc();
             $_SESSION['username'] = $userData['t_username']; //$userData['t_username'] - attribute from database table
-            header('Location: dashboardteacher.php');
+            header('Location: dashboard.php');
             exit();
         } else {
             // login failed

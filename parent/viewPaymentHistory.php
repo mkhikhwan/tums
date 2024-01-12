@@ -86,22 +86,8 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
 <body id="page-top">
     <div id="wrapper">
-        <nav class="navbar align-items-start sidebar sidebar-dark accordion bg-gradient-primary navbar-dark" id="sidebar"> <!-- Alex:25/12/23: Add ID -->
-            <div class="container-fluid d-flex flex-column p-0" ><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#" style="font-size: larger;">
-                    
-                    <div class="sidebar-brand-text mx-3"><span id="sidebar_label">taska unimas</span></div>
-                </a>
-                <hr class="sidebar-divider my-0">
-                <ul class="navbar-nav text-light mr-auto" id="accordionSidebar">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.php"><img class="logoH" src="..\assets\img\icons\home.png" alt=""></i><span>HOME</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="profilepageChild.php"><img class="logoH" src="..\assets\img\icons\profile.png" alt=""></i><span>PROFILE</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="payment.php"><img class="logoH" src="..\assets\img\icons\credit-card.png" alt=""></i><span>PAYMENT</span></a></li>
-                </ul>
-                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
-                <!-- <button class="btn btn-primary" id="logout" type="button">Log out</button> -->
-                <a href="../logout.php" class="btn btn-primary" id="logout">Log out</a>
-            </div>
-        </nav>
+        <!-- Include using php -->
+        <?php include('sidemenu.php'); ?>
 
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
@@ -111,49 +97,45 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     <div class="container-fluid header"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
                         <i class="fas fa-bars"></i></button>
                         <label class="form-label fs-3 text-nowrap" id="label_welcome">
-                            <br><h4>My Profile : <span><?= $user_data2['c_name']?></span></h4></label>
+                            <br><h4>Payment History</h4></label>
                     </div>
                 </nav>
 
-                <!-- MAIN CONTENT -->
-                <div class="container-fluid">
+                <!-- MAIN PROFILE -->
+                <div class="container p-4">
                     <div class="row">
-                        <div class="col">
-
-                                <!-- MAIN PROFILE -->
-                                <div class="row">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">ID</th>
-                                                <th scope="col">Payment Detail</th>
-                                                <th scope="col">Fee (RM)</th>
-                                                <th scope="col">Date</th>
-                                                <th scope="col">Invoice</th>
-                                                <!-- Add more columns as needed -->
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            // Loop through the fetched data and display it in the table
-                                            // Fikri 01-01-2024
-
-                                            foreach ($user_data as $row) {
-                                                echo "<tr>";
-                                                echo "<td>" . $row['p_id'] . "</td>";
-                                                echo "<td>" . $row['p_name'] . "</td>";
-                                                echo "<td>" . $row['p_price'] . "</td>";
-                                                echo "<td>" . $row['p_date'] . "</td>";
-                                                echo '<td><a href="view_invoice.php?p_id=' . $row['p_id'] . '">View Invoice</a></td>';
-                                                echo "</tr>";
-                                            }
-                                            ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Payment Detail</th>
+                                    <th scope="col">Fee (RM)</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Invoice</th>
+                                    <!-- Add more columns as needed -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                // Loop through the fetched data and display it in the table
+                                // Fikri 01-01-2024
+                                foreach ($user_data as $row) {
+                                    echo "<tr>";
+                                    echo "<td>" . $row['p_id'] . "</td>";
+                                    echo "<td>" . $row['p_name'] . "</td>";
+                                    echo "<td>" . $row['p_price'] . "</td>";
+                                    echo "<td>" . $row['p_date'] . "</td>";
+                                    echo '<td>
+                                            <button class="btn btn-link view-invoice" data-pinvoice="' . $row['p_invoice'] . '">View Invoice</button>
+                                        </td>';
+                                    echo "</tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -167,6 +149,38 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add a click event listener to all elements with the class 'view-invoice'
+            var viewInvoiceButtons = document.querySelectorAll('.view-invoice');
+            viewInvoiceButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    // Get the value of 'data-pinvoice' attribute
+                    var pinvoice = this.getAttribute('data-pinvoice');
+
+                    // Create a form element
+                    var form = document.createElement('form');
+                    form.action = '../generateInvoice.php';
+                    form.method = 'post';
+
+                    // Create a hidden input field for 'p_invoice'
+                    var inputPInvoice = document.createElement('input');
+                    inputPInvoice.type = 'hidden';
+                    inputPInvoice.name = 'invoiceID';
+                    inputPInvoice.value = pinvoice;
+
+                    // Append the hidden input field to the form
+                    form.appendChild(inputPInvoice);
+
+                    // Append the form to the document body
+                    document.body.appendChild(form);
+
+                    // Submit the form
+                    form.submit();
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

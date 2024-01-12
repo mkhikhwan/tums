@@ -3,6 +3,10 @@ session_start();
 include '../config.php';
 
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+    $mentorID = $_GET['tid']; //Get from GET tid
+    $teacherData = getTeacherData($conn, $mentorID);
+    $teacherName = $teacherData['t_name'];
+    $teacherProgram = $teacherData['t_program'];
 
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
@@ -10,22 +14,23 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
     // Call the function to get all children
     // $childList = getAllChild($conn);
-    $childList = getUnassignedChildren($conn);
+    $childList = getChildListByProgram($conn, $teacherProgram);
 
     // If form is submitted
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST['assignCheckbox'])) {
             $selectedChildren = $_POST['assignCheckbox'];
-            $mentorID = $_GET['tid']; //Get from GET tid
 
-            // Loop through selected children and assign the mentor
-            foreach ($selectedChildren as $menteeID) {
-                assignMentorToChild($conn, $mentorID, $menteeID);
-            }
+            // Begin assign mentee list to mentor
+            assignMentorMentee($conn, $mentorID, $selectedChildren, $teacherProgram);
 
-            // Set success message
-            $_SESSION['message'] = "Assigned to Mentee successful";
-            $_SESSION['message_type'] = "success";
+            // Redirect
+            header('Location: mentorMentee.php');
+            exit();
+        }else{
+            // Set error message
+            $_SESSION['message'] = "Assign unsuccessful.";
+            $_SESSION['message_type'] = "warning";
 
             // Redirect
             header('Location: mentorMentee.php');
@@ -38,28 +43,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     header('Location: login.php');
 }
 
-// Function to get all children
-function getAllChild($conn) {
-    $childList = array();
-
-    $query = "SELECT * FROM children";
-    $result = mysqli_query($conn, $query);
-
-    if (!$result) {
-        die("Error: " . mysqli_error($conn));
-    }
-
-    if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $childList[] = $row;
-        }
-    } else {
-        echo "Error! No data found.";
-    }
-
-    return $childList;
-}
-
 function assignMentorToChild($conn, $mentorID, $menteeID) {
     $query = "INSERT INTO mentormentee (MentorID, MenteeID) VALUES ('$mentorID', '$menteeID')";
     $result = mysqli_query($conn, $query);
@@ -69,9 +52,10 @@ function assignMentorToChild($conn, $mentorID, $menteeID) {
     }
 }
 
-function getUnassignedChildren($conn) {
-    $query = "SELECT * FROM children 
-              WHERE c_id NOT IN (SELECT MenteeID FROM mentormentee)";
+function getChildListByProgram($conn, $teacherProgram) {
+    $query = "SELECT c_id, c_name
+              FROM children
+              WHERE c_program = '$teacherProgram'";
     
     $result = mysqli_query($conn, $query);
 
@@ -79,13 +63,73 @@ function getUnassignedChildren($conn) {
         die("Error: " . mysqli_error($conn));
     }
 
-    $unassignedChildren = array();
+    $childList = array();
 
     while ($row = mysqli_fetch_assoc($result)) {
-        $unassignedChildren[] = $row;
+        $childList[] = $row;
     }
 
-    return $unassignedChildren;
+    return $childList;
+}
+
+function getTeacherData($conn, $teacherID) {
+    $query = "SELECT t_program, t_name FROM teacher WHERE t_id = '$teacherID'";
+    $result = mysqli_query($conn, $query);
+
+    if (!$result) {
+        die("Error: " . mysqli_error($conn));
+    }
+
+    $teacherData = mysqli_fetch_assoc($result);
+
+    return $teacherData;
+}
+
+function assignMentorMentee($conn, $mentorID, $selectedChildren, $teacherProgram) {
+    // Check the constraint based on the teacher program
+
+    $maxChildrenAllowed = 0;
+    switch ($teacherProgram) {
+        case 'Age 1':
+            $maxChildrenAllowed = 3;
+            break;
+        case 'Age 2':
+            $maxChildrenAllowed = 5;
+            break;
+        case 'Age 3':
+        case 'Age 4':
+            $maxChildrenAllowed = 8;
+            break;
+
+        default:
+            die("Error: Invalid teacher program '$teacherProgram'");
+    }
+
+    // Count the current number of assigned children
+    $assignedChildrenQuery = "SELECT COUNT(*) as count FROM mentormentee WHERE MentorID = '$mentorID'";
+    $assignedChildrenResult = mysqli_query($conn, $assignedChildrenQuery);
+
+    if (!$assignedChildrenResult) {
+        die("Error: " . mysqli_error($conn));
+    }
+
+    $currentAssignedChildren = mysqli_fetch_assoc($assignedChildrenResult)['count'];
+
+    // Check if the constraint is met
+    if ($currentAssignedChildren + count($selectedChildren) > $maxChildrenAllowed) {
+        $_SESSION['message'] = "Assign unsuccessful. Maximum limit reached for teacher program '$teacherProgram'.";
+        $_SESSION['message_type'] = "warning";
+        return;
+    }
+
+    // Loop through selected children and assign the mentor
+    foreach ($selectedChildren as $menteeID) {
+        assignMentorToChild($conn, $mentorID, $menteeID);
+    }
+
+    // Set success message
+    $_SESSION['message'] = "Assigned to Mentee successful";
+    $_SESSION['message_type'] = "success";
 }
 ?>
 
@@ -105,22 +149,10 @@ function getUnassignedChildren($conn) {
 
 <body id="page-top">
     <div id="wrapper">
-        <nav class="navbar align-items-start sidebar sidebar-dark accordion bg-gradient-primary navbar-dark" id="sidebar"> <!-- Alex:25/12/23: Add ID -->
-            <div class="container-fluid d-flex flex-column p-0" ><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#" style="font-size: larger;">
-                    
-                    <div class="sidebar-brand-text mx-3"><span id="sidebar_label">taska unimas</span></div>
-                </a>
-                <hr class="sidebar-divider my-0">
-                <ul class="navbar-nav text-light mr-auto" id="accordionSidebar">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.php"><img class="logoH" src="..\assets\img\icons\home.png" alt=""></i><span>HOME</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="manageChildren.php"><img class="logoH" src="..\assets\img\icons\student.png" alt=""></i><span>Manage Children</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="manageTeacher.php"><img class="logoH" src="..\assets\img\icons\Teacher.png" alt=""></i><span>Manage Teachers</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="mentorMentee.php"><img class="logoH" src="..\assets\img\icons\mentor.png" alt=""></i><span>Mentor Mentee</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="viewPayment.php"><img class="logoH" src="..\assets\img\icons\credit-card.png" alt=""></i><span>Payment</span></a></li>
-                </ul>
-                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div><button class="btn btn-primary" id="logout" type="button">Log out</button>
-            </div>
-        </nav>
+        <!-- Include using php -->
+        <?php include('sidemenu.php'); ?>
+
+        
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
 
@@ -129,7 +161,7 @@ function getUnassignedChildren($conn) {
                     <div class="container-fluid header"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
                         <i class="fas fa-bars"></i></button>
                         <label class="form-label fs-3 text-nowrap" id="label_welcome">
-                            <br><h4>Mentor Mentee</h4></label>
+                            <br><h4>Mentor : <?php echo $teacherName?></h4></label>
                     </div>
                 </nav>
 
@@ -175,7 +207,7 @@ function getUnassignedChildren($conn) {
                                                         echo '</div>';
                                                         
                                                         // Data
-                                                        echo '<div class="col-md-11 p-1 bg-light rounded-pill text-black d-inline-flex justify-content-between">';
+                                                        echo '<div class="col-md-11 p-1 bg-white rounded-pill text-black d-inline-flex justify-content-between">';
                                                         
                                                         // Child Name
                                                         echo '<div class="col d-flex align-items-center">';
