@@ -96,13 +96,13 @@ function pidtoStripe($paymentDetails,$user_data){
     foreach ($paymentDetails as $rows) {
         $itemList = array();
 
-        // Product 1 : Monthly Fee (0-12 months)
-        if (strpos($rows['p_name'], 'Fee') !== false && $user_data["c_age"] === 0) {
-            if(strpos($user_data['c_UNIMASstaff'] , 'Yes')){
-                // Staff price
+        // Product 1 : Monthly Fee / Age 1
+        if (strpos($rows['p_name'], 'Nursery Fee') !== false && $user_data["c_program"] === "Age 1") {
+            if($user_data['c_UNIMASstaff'] === 'Yes'){
+                // Staff price // RM 320
                 $id = "price_1OWF3RFp8k55haph45Z3PuRI";
             }else{
-                // Non-Staff price
+                // // Non-Staff price // RM 400
                 $id = "price_1OWF5YFp8k55haphq4IHXiTZ";
             }
 
@@ -112,13 +112,13 @@ function pidtoStripe($paymentDetails,$user_data){
             ];
         }
 
-        // Product 2 : Monthly Fee (1-2 yo)
-        if (strpos($rows['p_name'], 'Fee') !== false && $user_data["c_age"] === 1) {
-            if(strpos($user_data['c_UNIMASstaff'] , 'Yes')){
-                // Staff price
+        // Product 2 : Monthly Fee / Age 2
+        if (strpos($rows['p_name'], 'Nursery Fee') !== false && $user_data["c_program"] === "Age 2") {
+            if($user_data['c_UNIMASstaff'] === 'Yes'){
+                // Staff price // RM 280
                 $id = "price_1OWH1BFp8k55haphpfHUp88f";
             }else{
-                // Non-Staff price
+                // Non-Staff price // RM 370
                 $id = "price_1OWH5NFp8k55haphstE7PPtJ";
             }
 
@@ -128,13 +128,13 @@ function pidtoStripe($paymentDetails,$user_data){
             ];
         }
 
-        // Product 3 : Monthly Fee (3-4 yo)
-        if (strpos($rows['p_name'], 'Fee') !== false && $user_data["c_age"] === 2) {
-            if(strpos($user_data['c_UNIMASstaff'] , 'Yes')){
-                // Staff price
+        // Product 3 : Monthly Fee / Age 3 n 4
+        if (strpos($rows['p_name'], 'Nursery Fee') !== false && ( $user_data["c_program"] === "Age 3" || $user_data["c_program"] === "Age 4") ){
+            if($user_data['c_UNIMASstaff'] === 'Yes'){
+                // Staff price // RM 200
                 $id = "price_1OWHGrFp8k55haphVd0mox5o";
             }else{
-                // Non-Staff price
+                // Non-Staff price // RM 320
                 $id = "price_1OWHHkFp8k55haphopYH985j";
             }
 
@@ -392,20 +392,29 @@ function pidtoStripe($paymentDetails,$user_data){
                                         --bs-btn-disabled-bg: #00ff1a !important;
                                         --bs-btn-disabled-border-color: #00ff1a !important;
                                 ">
-                                <!-- Pay</button> -->
+                                <!-- Pay</button>
+                                <input value="Direct Pay" name="directPayment" class="btn btn-primary" type="submit" style="width: 30% !important; 
+                                width: 30% !important;
+                                        --bs-btn-color: #fff !important;
+                                        --bs-btn-bg: #00CE15 !important;
+                                        --bs-btn-border-color: #00CE15 !important;
+                                        --bs-btn-hover-color: #fff !important;
+                                        --bs-btn-hover-bg: #1a9d27 !important;
+                                        --bs-btn-hover-border-color: #1a9d27 !important;
+                                        --bs-btn-focus-shadow-rgb: 105, 136, 228 !important;
+                                        --bs-btn-active-color: #fff !important;
+                                        --bs-btn-active-bg: #00ff1a !important;
+                                        --bs-btn-active-border-color: #00ff1a !important;
+                                        --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125 !important);
+                                        --bs-btn-disabled-color: #fff !important;
+                                        --bs-btn-disabled-bg: #00ff1a !important;
+                                        --bs-btn-disabled-border-color: #00ff1a !important;
+                                " formaction="processcheckout.php"> -->
                             </div>
                         </div>
                     </div>
                 </div>
                 </form>
-
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>

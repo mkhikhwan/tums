@@ -31,7 +31,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
         echo "Error!" . mysqli_error($conn);
     }
 
-    $query2="SELECT t.t_name FROM mentormentee mt 
+    $query2="SELECT t.t_name, t.t_id as t_id FROM mentormentee mt 
         JOIN teacher t on mt.MentorID = t.t_id 
         JOIN children c ON mt.MenteeID = c.c_id 
         WHERE c.c_username = ? ";
@@ -47,7 +47,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
             if (mysqli_num_rows($result2) > 0) {
                 $user_data2 = mysqli_fetch_assoc($result2);
             } else {
-                echo "Error!.";
+                $noMentor = true;
             }
         } else {
             echo "Error!" . mysqli_error($conn);
@@ -72,7 +72,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Profile : <?= $user_data['name']?></title>
+    <title>Profile></title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
@@ -92,7 +92,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     <div class="container-fluid header"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
                         <i class="fas fa-bars"></i></button>
                         <label class="form-label fs-3 text-nowrap" id="label_welcome">
-                            <br><h4>View Profile : <span><?= $user_data['c_name']?></span></span></h4></label>
+                            <br><h4>Profile</h4></label>
                     </div>
                 </nav>
 
@@ -111,7 +111,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
                                                 <!-- Profile Picture Column (Left) -->
                                                 <div class="col-md-3 d-flex justify-content-center align-items-center">
-                                                    <img src="..\assets/img/boy-placeholder-image.jpg" alt="Profile Picture" class="picture rounded-circle">
+                                                    <img src="../data/img/children/<?= $user_data['c_profilePicture'] ?>" alt="Profile Picture" style="width:150px; height:150px; object-fit:cover;"  class="picture rounded-circle">
                                                 </div>
     
     
@@ -307,7 +307,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                             <!-- Row for Disabilities -->
                                             <div class="row m-0 p-1">
                                                 <div class="text-nowrap text-center col-sm-2 col-md-2 d-flex justify-content-center align-items-center">
-                                                    <p>DISABILITIES</p>
+                                                    <p>Disabilities</p>
                                                 </div>
                                                 <div class="col-sm-10 col-md-10 d-flex gx-0 justify-content-center align-items-center text-center">
                                                     <div class="white_box">
@@ -329,6 +329,18 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                 </div>
                                             </div>
 
+                                            <!-- Row for Program -->
+                                            <div class="row m-0 p-1">
+                                                <div class="text-nowrap text-center col-sm-2 col-md-2 d-flex justify-content-center align-items-center">
+                                                    <p>Program</p>
+                                                </div>
+                                                <div class="col-sm-10 col-md-10 d-flex gx-0 justify-content-center align-items-center text-center">
+                                                    <div class="white_box">
+                                                        <span><?= $user_data['c_program']?></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <!-- Row for Mentor -->
                                             <div class="row m-0 p-1">
                                                 <div class="text-nowrap text-center col-sm-2 col-md-2 d-flex justify-content-center align-items-center">
@@ -336,7 +348,16 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                 </div>
                                                 <div class="col-sm-10 col-md-10 d-flex gx-0 justify-content-center align-items-center text-center">
                                                     <div class="white_box">
-                                                        <span><?= $user_data2['t_name']?></span>
+                                                        <span>
+                                                            <?php
+                                                                if ($noMentor) {
+                                                                    echo "None";
+                                                                } else {
+                                                                    // Assuming $user_data2['t_id'] is the identifier for the mentor
+                                                                    echo '<a href="viewMentor.php?tid=' . $user_data2['t_id'] . '">' . $user_data2['t_name'] . '</a>';
+                                                                }
+                                                            ?>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -350,13 +371,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     </div>
                 </div>
             </div>
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>

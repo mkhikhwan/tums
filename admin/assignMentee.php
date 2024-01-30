@@ -29,8 +29,8 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
             exit();
         }else{
             // Set error message
-            $_SESSION['message'] = "Assign unsuccessful.";
-            $_SESSION['message_type'] = "warning";
+            $_SESSION['message_mm'] = "Assign unsuccessful.";
+            $_SESSION['message_mm_type'] = "warning";
 
             // Redirect
             header('Location: mentorMentee.php');
@@ -53,9 +53,15 @@ function assignMentorToChild($conn, $mentorID, $menteeID) {
 }
 
 function getChildListByProgram($conn, $teacherProgram) {
+    // Filter by Child who is not assigned to the mentormentee table and by program
     $query = "SELECT c_id, c_name
               FROM children
-              WHERE c_program = '$teacherProgram'";
+              WHERE c_program = '$teacherProgram'
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM mentormentee
+                  WHERE mentormentee.MenteeID = children.c_id
+              )";
     
     $result = mysqli_query($conn, $query);
 
@@ -117,8 +123,8 @@ function assignMentorMentee($conn, $mentorID, $selectedChildren, $teacherProgram
 
     // Check if the constraint is met
     if ($currentAssignedChildren + count($selectedChildren) > $maxChildrenAllowed) {
-        $_SESSION['message'] = "Assign unsuccessful. Maximum limit reached for teacher program '$teacherProgram'.";
-        $_SESSION['message_type'] = "warning";
+        $_SESSION['message_mm'] = "Assign unsuccessful. Maximum limit reached for teacher program '$teacherProgram'.";
+        $_SESSION['message_mm_type'] = "warning";
         return;
     }
 
@@ -128,8 +134,8 @@ function assignMentorMentee($conn, $mentorID, $selectedChildren, $teacherProgram
     }
 
     // Set success message
-    $_SESSION['message'] = "Assigned to Mentee successful";
-    $_SESSION['message_type'] = "success";
+    $_SESSION['message_mm'] = "Mentee(s) Assigned to Mentor Successfully";
+    $_SESSION['message_mm_type'] = "success";
 }
 ?>
 
@@ -140,7 +146,7 @@ function assignMentorMentee($conn, $mentorID, $selectedChildren, $teacherProgram
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Profile</title>
+    <title>Assign Mentee</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
@@ -173,6 +179,22 @@ function assignMentorMentee($conn, $mentorID, $selectedChildren, $teacherProgram
                             <form action="" method="post">
                                 <div class="row">
                                     <div class="col-lg-12 col-xl-12 mb-2">
+                                        <div class="mb-3">
+                                            <p class="fs-5 fw-bold">Program : <?= $teacherData['t_program'] ?>
+                                            <?php
+                                            if ($teacherData['t_program'] == "Age 1") {
+                                                echo " (Limit : 3)";
+                                            } elseif ($teacherData['t_program'] == "Age 2") {
+                                                echo " (Limit : 5)";
+                                            } elseif ($teacherData['t_program'] == "Age 3") {
+                                                echo " (Limit : 8)";
+                                            } elseif ($teacherData['t_program'] == "Age 4") {
+                                                echo " (Limit : 8)";
+                                            }
+                                            ?>
+                                            </p>
+                                        </div>
+                                        
                                         <div class="card text-white bg-primary shadow">
                                             <div class="container py-2">
 
@@ -185,7 +207,7 @@ function assignMentorMentee($conn, $mentorID, $selectedChildren, $teacherProgram
 
                                                     <!-- DATA -->
                                                     <div class="col-sm-11 col-10">
-                                                        <p>Name of Child</p>                                         
+                                                        <p>Name of Children</p>                                         
                                                     </div>
                                                 </div>
 
@@ -235,7 +257,7 @@ function assignMentorMentee($conn, $mentorID, $selectedChildren, $teacherProgram
 
                                 <div class="row">
                                     <div class="col-12 d-flex justify-content-end">
-                                        <input type="submit" value="Assign to Mentee" class="btn btn-success text-white">
+                                        <input type="submit" value="Assign Mentee(s)" class="btn btn-success text-white">
                                     </div>
                                 </div>
                             </form>
@@ -244,14 +266,6 @@ function assignMentorMentee($conn, $mentorID, $selectedChildren, $teacherProgram
                     </div>
                 </div>
             </div>
-
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>

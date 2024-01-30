@@ -80,7 +80,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Payment</title>
+    <title>Payment</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
@@ -110,61 +110,57 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     <div class="row">
                         <div class="col">
                             <!-- MAIN PROFILE -->
-                            <div class="container p-4">
-                                <form action="checkout.php" method="post">
-                                    <div class="row">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">ID</th>
-                                                    <th scope="col">Payment Detail</th>
-                                                    <th scope="col">Fee (RM)</th>
-                                                    <th scope="col">Status</th>
-                                                    <th scope="col">Select</th>
-                                                    <!-- Add more columns as needed -->
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                // Loop through the fetched data and display it in the table
-                                                // Fikri 01-01-2024
+                            <form action="checkout.php" method="post">
+                                <div class="card text-white bg-primary shadow">
+                                    <div class="container p-4">
+                                        <div class="row">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-1">No.</div>
+                                                    <div class="col-1">ID</div>
+                                                    <div class="col-5">Payment Details</div>
+                                                    <div class="col-2">Fee (RM)</div>
+                                                    <div class="col-2">Status</div>
+                                                    <div class="col-1">Select</div>
+                                                </div>
 
-                                                foreach ($user_data as $row) {
-                                                    echo "<tr>";
-                                                    echo "<td>" . $row['p_id'] . "</td>";
-                                                    echo "<td>" . $row['p_name'] . "</td>";
-                                                    echo "<td>" . $row['p_price'] . "</td>";
-                                                    echo "<td>" . $row['p_status'] . "</td>";
-                                                    echo '<td><input type="checkbox" name="selected_rows[]" value="' . $row['p_id'] . '"></td>';
-
-                                                    echo "</tr>";
-                                                }
-                                                ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col d-flex justify-content-between">
-                                            <a href="viewPaymentHistory.php" class="btn btn-warning" role="button">Payment History</a>
-                                            <button type="submit" class="btn btn-success">Checkout</button>
+                                                <?php if (!empty($user_data)): ?>
+                                                    <?php foreach ($user_data as $index => $row): ?>
+                                                        <div class="row bg-white rounded text-black mt-2 py-1">
+                                                            <div class="col-1"><?= $index + 1 ?></div>
+                                                            <div class="col-1"><?= $row['p_id'] ?></div>
+                                                            <div class="col-5"><?= $row['p_name'] ?></div>
+                                                            <div class="col-2"><?= $row['p_price'] ?></div>
+                                                            <div class="col-2"><?= $row['p_status'] ?></div>
+                                                            <div class="col-1 d-flex align-items-center justify-content-center">
+                                                                <input type="checkbox" name="selected_rows[]" value="<?= $row['p_id'] ?>">
+                                                            </div>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <div class="row mt-3">
+                                                        <div class="col-12 text-center fw-bold">
+                                                            There are no outstanding fees currently.
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col d-flex justify-content-between mt-2">
+                                        <a href="viewPaymentHistory.php" class="btn btn-warning text-white" role="button">Payment History</a>
+                                        <button type="submit" class="btn btn-success text-white">Checkout</button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>
@@ -174,6 +170,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
 <?php
     } else {
-        header('Location: viewPayment.php');
+        header('Location: login.php');
     }
 ?>

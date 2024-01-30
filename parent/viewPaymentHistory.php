@@ -32,7 +32,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     $user_data[] = $row;
                 }
             } else {
-                echo "Error!. 1";
+                $noPaymentHistory = true;
             }
         } else {
             echo "Error! 2" . mysqli_error($conn);
@@ -76,7 +76,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Payment</title>
+    <title>Payment History</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
@@ -102,50 +102,51 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                 </nav>
 
                 <!-- MAIN PROFILE -->
-                <div class="container p-4">
+                <div class="container">
                     <div class="row">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">ID</th>
-                                    <th scope="col">Payment Detail</th>
-                                    <th scope="col">Fee (RM)</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Invoice</th>
-                                    <!-- Add more columns as needed -->
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                // Loop through the fetched data and display it in the table
-                                // Fikri 01-01-2024
-                                foreach ($user_data as $row) {
-                                    echo "<tr>";
-                                    echo "<td>" . $row['p_id'] . "</td>";
-                                    echo "<td>" . $row['p_name'] . "</td>";
-                                    echo "<td>" . $row['p_price'] . "</td>";
-                                    echo "<td>" . $row['p_date'] . "</td>";
-                                    echo '<td>
-                                            <button class="btn btn-link view-invoice" data-pinvoice="' . $row['p_invoice'] . '">View Invoice</button>
-                                        </td>';
-                                    echo "</tr>";
-                                }
-                                ?>
-                            </tbody>
-                        </table>
+                        <div class="col-12">
+                            <div class="card bg-primary shadow text-white">
+                                <div class="container p-4">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-1">No.</div>
+                                            <div class="col-1">ID</div>
+                                            <div class="col-4">Payment Details</div>
+                                            <div class="col-2">Fee (RM)</div>
+                                            <div class="col-2">Date</div>
+                                            <div class="col-2">Invoice</div>
+                                        </div>
+
+                                        <?php if (!empty($user_data)): ?>
+                                            <?php foreach ($user_data as $index => $row): ?>
+                                                <div class="row bg-white rounded text-black mt-2 py-1">
+                                                    <div class="col-1"><?= $index + 1 ?></div>
+                                                    <div class="col-1"><?= $row['p_id'] ?></div>
+                                                    <div class="col-4"><?= $row['p_name'] ?></div>
+                                                    <div class="col-2"><?= $row['p_price'] ?></div>
+                                                    <div class="col-2"><?= $row['p_date'] ?></div>
+                                                    <div class="col-2">
+                                                        <button class="btn btn-link view-invoice p-0 m-0" data-pinvoice="<?= $row['p_invoice'] ?>">View Invoice</button>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <div class="row mt-3">
+                                                <div class="col-12 text-center fw-bold">
+                                                    No payment has been done.
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
+
             </div>
         </div>
-
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>

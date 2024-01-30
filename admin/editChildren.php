@@ -17,7 +17,8 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
         modifyChildData($conn, $selectChildID, $user_data['c_username']);
 
         // Redirect to the same page using GET to avoid resubmission
-        header("Location: manageChildren.php");
+        header("Location: viewChildren.php?id=" . urlencode($selectChildID));
+
         exit();
     }
 
@@ -77,63 +78,55 @@ function modifyChildData($conn, $childID, $username) {
     $UNIMASstaff = mysqli_real_escape_string($conn, $_POST['c_UNIMASstaff']);
     $Disabilities = mysqli_real_escape_string($conn, $_POST['c_Disabilities']);
     $Allergies = mysqli_real_escape_string($conn, $_POST['c_Allergies']);
+    $program = mysqli_real_escape_string($conn, $_POST['c_program']);
     
     //Upload image - ikhwan 03-01-2023
-    // $targetDir = "../data/img/children/";
-    $profilePicture = $username . ".png";
-    // if (isset($_FILES["c_profilePicture"]) && $_FILES["c_profilePicture"]["error"] == 0) {
-    //     // Get the original filename
-    //     $original_filename = basename($_FILES["c_profilePicture"]["name"]);
-
-    //     // Extract the file extension
-    //     $file_extension = pathinfo($original_filename, PATHINFO_EXTENSION);
-
-    //     // Use username and file extension as the filename
-    //     $new_filename = $username . '.' . $file_extension;
-    //     $profilePicture = $new_filename;
-
-    //     $target_file = $targetDir . $new_filename;
-
-    //     // Check if the file already exists
-    //     if (file_exists($target_file)) {
-    //         // Delete the existing file
-    //         unlink($target_file);
-
-    //         // Move the uploaded file to the specified directory
-    //         if (move_uploaded_file($_FILES["c_profilePicture"]["tmp_name"], $target_file)) {
-    //             $profilePicture = $new_filename;
-    //             $imageError = "The file " . htmlspecialchars($new_filename) . " has been replaced and uploaded.";
-    //         } else {
-    //             $imageError = "Sorry, there was an error uploading your file.";
-    //         }
-    //     } else {
-    //         // Move the uploaded file to the specified directory
-    //         if (move_uploaded_file($_FILES["c_profilePicture"]["tmp_name"], $target_file)) {
-    //             $profilePicture = $new_filename;
-    //             $imageError = "The file " . htmlspecialchars($new_filename) . " has been uploaded.";
-    //         } else {
-    //             $imageError = "Sorry, there was an error uploading your file.";
-    //         }
-    //     }
-    // } else {
-    //     $imageError = "Error: " . $_FILES["c_profilePicture"]["error"];
-    // }
+    $targetDir = "../data/img/children/";
+    if (isset($_FILES["c_profilePicture"]) && $_FILES["c_profilePicture"]["error"] == 0) {
+        // Get the original filename
+        $original_filename = basename($_FILES["c_profilePicture"]["name"]);
     
+        // Extract the file extension
+        $file_extension = pathinfo($original_filename, PATHINFO_EXTENSION);
+    
+        // Use username and file extension as the filename
+        $new_filename = $username . '.' . $file_extension;
+        $profilePicture = $new_filename;
+    
+        $target_file = $targetDir . $new_filename;
+    
+        // Check if the file already exists
+        if (file_exists($target_file)) {
+            // Delete the existing file
+            unlink($target_file);
+        }
+    
+        // Move the uploaded file to the specified directory
+        if (move_uploaded_file($_FILES["c_profilePicture"]["tmp_name"], $target_file)) {
+            $imageError = "The file " . htmlspecialchars($new_filename) . " has been uploaded.";
+        } else {
+            $imageError = "Sorry, there was an error uploading your file.";
+        }
+    } else {
+        // Set to default
+        $profilePicture = loadImage($conn, $childID);
+    }
+
     // Query to edit the table "children"
     $query = "UPDATE children SET
-        c_registerID=?, c_name=?, c_age=?, c_enrollmentDate=?, c_gender=?, c_race=?,
-        c_address=?, c_birthCertificate=?, c_FatherName=?, c_FatherPhoneNo=?,
-        c_MotherName=?, c_MotherPhoneNo=?, c_UNIMASstaff=?, c_Disabilities=?, c_Allergies=?,
-        c_profilePicture=?  -- Add the column for profile picture here
-        WHERE c_id=?";
-        
+    c_registerID=?, c_name=?, c_age=?, c_enrollmentDate=?, c_gender=?, c_race=?,
+    c_address=?, c_birthCertificate=?, c_FatherName=?, c_FatherPhoneNo=?,
+    c_MotherName=?, c_MotherPhoneNo=?, c_UNIMASstaff=?, c_Disabilities=?, c_Allergies=?,
+    c_profilePicture=?, c_program=?
+    WHERE c_id=?";
+
     $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, 'ssissssssssssssss', 
+        mysqli_stmt_bind_param($stmt, 'ssisssssssssssssss', 
             $registerID, $name, $age, $enrollmentDate, $gender, $race,
             $address, $birthCertificate, $FatherName, $FatherPhoneNo,
-            $MotherName, $MotherPhoneNo, $UNIMASstaff, $Disabilities, $Allergies, $profilePicture, $childID);
+            $MotherName, $MotherPhoneNo, $UNIMASstaff, $Disabilities, $Allergies, $profilePicture, $program, $childID);
 
         $success = mysqli_stmt_execute($stmt);
 
@@ -179,7 +172,7 @@ function loadImage($conn, $id) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Profile</title>
+    <title>Edit Child</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
@@ -200,7 +193,7 @@ function loadImage($conn, $id) {
                     <div class="container-fluid header"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
                         <i class="fas fa-bars"></i></button>
                         <label class="form-label fs-3 text-nowrap" id="label_welcome">
-                            <br><h4>Edit Child</h4></label>
+                            <br><h4>Edit Profile : <span><?= $user_data['c_name']?></span></h4></label>
                     </div>
                 </nav>
 
@@ -219,7 +212,7 @@ function loadImage($conn, $id) {
                         }
                     ?>
 
-                    <form action="" method="post">
+                    <form action="" method="post" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col">
                                 <div class="row">
@@ -324,6 +317,16 @@ function loadImage($conn, $id) {
                                                     <label for="allergies">Allergies:</label>
                                                     <input type="text" class="form-control" id="c_Allergies" name="c_Allergies" placeholder="Allergies">
                                                 </div>
+
+                                                <div class="form-group mt-3">
+                                                    <label for="programSelect">Select Program:</label>
+                                                    <select class="form-control" id="c_program" name="c_program" required>
+                                                        <option value="Age 1">Age 1</option>
+                                                        <option value="Age 2">Age 2</option>
+                                                        <option value="Age 3">Age 3</option>
+                                                        <option value="Age 4">Age 4</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -333,7 +336,7 @@ function loadImage($conn, $id) {
 
                         <div class="row">
                             <div class="col d-flex justify-content-end">
-                               <input type="submit" value="Submit" class="btn btn-success">
+                               <input type="submit" value="Save" class="btn btn-success">
                             </div>
                         </div>
                     </form>
@@ -341,13 +344,6 @@ function loadImage($conn, $id) {
 
                 </div>
             </div>
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>
@@ -359,21 +355,22 @@ function loadImage($conn, $id) {
                 // Ikhwan 04-Jan-2024
 
                 var userData = {
-                c_registerID: '<?php echo $user_data['c_registerID']; ?>',
-                c_name: '<?php echo $user_data['c_name']; ?>',
-                c_age: '<?php echo $user_data['c_age']; ?>',
-                c_enrollmentDate: '<?php echo $user_data['c_enrollmentDate']; ?>',
-                c_gender: '<?php echo $user_data['c_gender']; ?>',
-                c_race: '<?php echo $user_data['c_race']; ?>',
-                c_address: '<?php echo $user_data['c_address']; ?>',
-                c_birthCertificate: '<?php echo $user_data['c_birthCertificate']; ?>',
-                c_FatherName: '<?php echo $user_data['c_FatherName']; ?>',
-                c_FatherPhoneNo: '<?php echo '0' . $user_data['c_FatherPhoneNo']; ?>',
-                c_MotherName: '<?php echo $user_data['c_MotherName']; ?>',
-                c_MotherPhoneNo: '<?php echo '0' . $user_data['c_MotherPhoneNo']; ?>',
-                c_UNIMASstaff: '<?php echo $user_data['c_UNIMASstaff']; ?>',
-                c_Disabilities: '<?php echo $user_data['c_Disabilities']; ?>',
-                c_Allergies: '<?php echo $user_data['c_Allergies']; ?>',
+                    c_registerID: '<?php echo $user_data['c_registerID']; ?>',
+                    c_name: '<?php echo $user_data['c_name']; ?>',
+                    c_age: '<?php echo $user_data['c_age']; ?>',
+                    c_enrollmentDate: '<?php echo $user_data['c_enrollmentDate']; ?>',
+                    c_gender: '<?php echo $user_data['c_gender']; ?>',
+                    c_race: '<?php echo $user_data['c_race']; ?>',
+                    c_address: '<?php echo $user_data['c_address']; ?>',
+                    c_birthCertificate: '<?php echo $user_data['c_birthCertificate']; ?>',
+                    c_FatherName: '<?php echo $user_data['c_FatherName']; ?>',
+                    c_FatherPhoneNo: '<?php echo '0' . $user_data['c_FatherPhoneNo']; ?>',
+                    c_MotherName: '<?php echo $user_data['c_MotherName']; ?>',
+                    c_MotherPhoneNo: '<?php echo '0' . $user_data['c_MotherPhoneNo']; ?>',
+                    c_UNIMASstaff: '<?php echo $user_data['c_UNIMASstaff']; ?>',
+                    c_Disabilities: '<?php echo $user_data['c_Disabilities']; ?>',
+                    c_Allergies: '<?php echo $user_data['c_Allergies']; ?>',
+                    c_program: '<?php echo $user_data['c_program']; ?>', // Add this line for c_program
                 };
 
                 // Set values in the form fields
@@ -392,6 +389,7 @@ function loadImage($conn, $id) {
                 document.getElementById('c_UNIMASstaff').value = userData.c_UNIMASstaff;
                 document.getElementById('c_Disabilities').value = userData.c_Disabilities;
                 document.getElementById('c_Allergies').value = userData.c_Allergies;
+                document.getElementById('c_program').value = userData.c_program; // Set value for c_program
             }
 
             loadData();

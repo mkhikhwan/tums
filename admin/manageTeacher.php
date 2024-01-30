@@ -9,8 +9,11 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     }
 
     // display all teachers names
-            $query = "SELECT t_name, t_id FROM teacher"; // Updated query for teachers
-            $result = mysqli_query($conn, $query);
+    $query = "SELECT t_name, t_id
+    FROM teacher
+    ORDER BY CAST(SUBSTRING(t_id, 3) AS UNSIGNED)";
+
+     $result = mysqli_query($conn, $query);
 
     if (!$result) {
         die("Error: " . mysqli_error($conn));
@@ -40,7 +43,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Profile</title>
+    <title>Manage Teacher</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
@@ -61,7 +64,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     <div class="container-fluid header"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
                         <i class="fas fa-bars"></i></button>
                         <label class="form-label fs-3 text-nowrap" id="label_welcome">
-                            <br><h4>Manage Teacher</h4></label>
+                            <br><h4>Manage Teachers</h4></label>
                     </div>
                 </nav>
 
@@ -74,7 +77,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     </div>
                     <div class="row">
                         <div class="col-12 mb-2">
-                            <input type="text" id='searchInput' class="form-control" placeholder="Search by name">
+                            <input type="text" id='searchInput' class="form-control" placeholder="Search Teacher Name">
                         </div>
                     </div>
 
@@ -116,13 +119,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     </div>
                 </div>
             </div>
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>
@@ -174,7 +170,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                         },
                         error: function(error) {
                             // console.error('Error:', error);
-                            alert("Error deleting selected items.");
+                            alert("Error deleting selected items: " + error.responseText);
                         }
                     });
                 }
@@ -188,8 +184,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                 // Get the data-id attribute value
                 var t_id = row.data('id');
 
-                console.log(t_id);
-
                 // Redirect to editChildren.php with the c_id parameter
                 window.location.href = 'editTeacher.php?id=' + t_id;
             });
@@ -202,10 +196,16 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                 // Get the data-id attribute value
                 var t_id = row.data('id');
 
-                console.log(t_id);
-
                 // Redirect to editChildren.php with the c_id parameter
                 window.location.href = 'viewTeacher.php?id=' + t_id;
+            });
+
+            $("#select-all").on("click", function(){
+                // Check if any checkbox is already checked
+                var anyChecked = $(".white_box input[type='checkbox']:checked").length > 0;
+
+                // Toggle checkbox states
+                $(".white_box input[type='checkbox']").prop("checked", !anyChecked);
             });
         });
     </script>

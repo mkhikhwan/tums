@@ -40,7 +40,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Profile</title>
+    <title>Profile</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
@@ -60,7 +60,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     <div class="container-fluid header"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
                         <i class="fas fa-bars"></i></button>
                         <label class="form-label fs-3 text-nowrap" id="label_welcome">
-                            <br><h4>My Profile : <span><?= $user_data['t_name']?></span></h4></label>
+                            <br><h4>Profile</h4></label>
                     </div>
                 </nav>
 
@@ -79,7 +79,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
                                                 <!-- Profile Picture Column (Left) -->
                                                 <div class="col-md-3 d-flex justify-content-center align-items-center">
-                                                    <img src="..\assets/img/male-placeholder-image.jpeg" alt="Profile Picture" class="picture rounded-circle">
+                                                    <img src="../data/img/teacher/<?= $user_data['t_profilePicture']?>" style="width:150px; height:150px; object-fit:cover;" alt="Profile Picture" class="picture rounded-circle">
                                                 </div>
     
     
@@ -136,7 +136,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                     <div class="row m-0 p-1">
                                                         <!-- Left column for type of information -->
                                                         <div class="text-nowrap text-center col-sm-2 col-md-2 d-flex justify-content-center align-items-center">
-                                                            <p>Phone Num.</p>
+                                                            <p>No Phone</p>
                                                         </div>
     
                                                         <!-- Right column for corresponding information -->
@@ -246,13 +246,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     </div>
                 </div>
             </div>
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>

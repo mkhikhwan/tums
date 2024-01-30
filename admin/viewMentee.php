@@ -26,8 +26,8 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
 
             // Set success message
-            $_SESSION['message'] = "Unassign Child to Teacher successful";
-            $_SESSION['message_type'] = "success";
+            $_SESSION['message_mm'] = "Child Unassigned from Teacher Successfully";
+            $_SESSION['message_mm_type'] = "success";
 
             // Refresh the page after deletion
             header('Location: mentorMentee.php?tid=' . $teacherID);
@@ -104,7 +104,7 @@ function getTeacherData($conn, $teacherID) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Profile</title>
+    <title>View Mentee</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
@@ -125,7 +125,7 @@ function getTeacherData($conn, $teacherID) {
                     <div class="container-fluid header"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
                         <i class="fas fa-bars"></i></button>
                         <label class="form-label fs-3 text-nowrap" id="label_welcome">
-                            <br><h4>Mentor : <?php echo $teacherName; ?></h4></label>
+                            <br><h4>List of Assigned Mentee(s) : <?php echo $teacherName; ?></h4></label>
                     </div>
                 </nav>
 
@@ -137,6 +137,10 @@ function getTeacherData($conn, $teacherID) {
                             <form action="" method="post">
                                 <div class="row">
                                     <div class="col-lg-12 col-xl-12 mb-2">
+                                        <div class="mb-3">
+                                            <p class="fs-5 fw-bold">Program : <?= $teacherData['t_program'] ?></p>
+                                        </div>
+
                                         <div class="card text-white bg-primary shadow">
                                             <div class="container py-2">
 
@@ -149,7 +153,7 @@ function getTeacherData($conn, $teacherID) {
 
                                                     <!-- DATA -->
                                                     <div class="col-sm-11 col-10">
-                                                        <p>Name of Child</p>                                         
+                                                        <p>Name of Children</p>                                         
                                                     </div>
                                                 </div>
 
@@ -198,14 +202,6 @@ function getTeacherData($conn, $teacherID) {
                     </div>
                 </div>
             </div>
-
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>

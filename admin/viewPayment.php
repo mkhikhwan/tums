@@ -80,11 +80,17 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Profile</title>
+    <title>Payment</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
     <link rel="stylesheet" href="../assets/css/untitled.css">
+
+    <style>
+        .fs-small{
+            font-size: 0.65rem;
+        }
+    </style>
 </head>
 
 <body id="page-top">
@@ -134,9 +140,9 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                 <div class="row m-0" id="textCont"> <!-- Alex:25/10/23: Add ID -->
                                                         <div class="container">
                                                             <div class="row font-weight-bold text-center">
-                                                                <div class="col-md-1">R-ID</div>
+                                                                <div class="col-md-2">R-ID</div>
                                                                 <div class="col-md-3">Child Name</div>
-                                                                <div class="col-md-8 d-inline-flex justified-content-center align-items-center">
+                                                                <div class="col-md-7 d-inline-flex justified-content-center align-items-center">
                                                                     <div class="col-1 text-center">Jan</div>
                                                                     <div class="col-1 text-center">Feb</div>
                                                                     <div class="col-1 text-center">Mar</div>
@@ -155,11 +161,11 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
             
                                                             <?php foreach ($childInfo as $child) { ?>
                                                                 <div class="row my-1">
-                                                                    <div class="col-1">
-                                                                        <div class=" bg-white text-black rounded-pill text-center w-100"><?php echo $child['c_id']; ?></div>
+                                                                    <div class="col-2">
+                                                                        <div class=" bg-white text-black rounded text-center w-100 fs-small p-1"><?php echo $child['c_id']; ?></div>
                                                                     </div>
-                                                                    <div class="col-3 bg-white text-black rounded-pill text-center"><?php echo $child['c_name']; ?></div>
-                                                                    <div class="col-8 d-inline-flex">
+                                                                    <div class="col-3 bg-white text-black rounded text-center fs-small p-1"><?php echo $child['c_name']; ?></div>
+                                                                    <div class="col-7 d-inline-flex">
                                                                         <?php foreach ($child['p_status'] as $status) { ?>
                                                                             <div class="col-1 text-center">
                                                                                 <?php if ($status == 'Paid') : ?>
@@ -186,13 +192,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     </div>
                 </div>
             </div>
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>

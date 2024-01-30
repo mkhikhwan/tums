@@ -41,7 +41,7 @@ $invoice_details = $_SESSION['invoice'];
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Profile</title>
+    <title>Payment</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
@@ -86,7 +86,7 @@ $invoice_details = $_SESSION['invoice'];
 
                                 <div class="col mt-2">
                                     <p>
-                                        We have received your payment successfully. An invoice is also sent to your E-mail.
+                                        We have received your payment successfully. A receipt is also sent to your E-mail.
                                     </p>
                                     <p>
                                         Any Inquiries please contact <strong>Admin @ TASKA UNIMAS</strong>
@@ -101,16 +101,7 @@ $invoice_details = $_SESSION['invoice'];
                         </div>
                     </div>
                 </div>
-
             </div>
-
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>
@@ -120,6 +111,7 @@ $invoice_details = $_SESSION['invoice'];
             var form = document.createElement('form');
             form.action = '../generateInvoice.php'; // Replace with the actual path
             form.method = 'post';
+            form.target = '_blank'; // Set the target to open in a new tab
 
             // Create a hidden input field for 'invoiceID'
             var inputInvoiceID = document.createElement('input');

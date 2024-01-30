@@ -40,7 +40,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Profile</title>
+    <title>Mentor Mentee</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
@@ -61,7 +61,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     <div class="container-fluid header"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
                         <i class="fas fa-bars"></i></button>
                         <label class="form-label fs-3 text-nowrap" id="label_welcome">
-                            <br><h4>Mentor Mentee</h4></label>
+                            <br><h4>Assign Mentor Mentee</h4></label>
                     </div>
                 </nav>
 
@@ -72,14 +72,14 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                             <div class="row px-2">
                                 <?php
                                     // Display modify_message if set
-                                    if (isset($_SESSION['message'])) {
+                                    if (isset($_SESSION['message_mm'])) {
                                         echo '
-                                        <div class="alert alert-' . ($_SESSION['message_type'] ?? 'info') . ' alert-dismissible fade show" role="alert">
-                                            ' . $_SESSION['message'] . '
+                                        <div class="alert alert-' . ($_SESSION['message_mm_type'] ?? 'info') . ' alert-dismissible fade show" role="alert">
+                                            ' . $_SESSION['message_mm'] . '
                                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                         </div>';
-                                        unset($_SESSION['message']); // Clear the session variable
-                                        unset($_SESSION['message_type']); // Clear the session variable
+                                        unset($_SESSION['message_mm']); // Clear the session variable
+                                        unset($_SESSION['message_mm_type']); // Clear the session variable
                                     }
                                 ?>
                             </div>
@@ -99,7 +99,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
                                                 <!-- DATA -->
                                                 <div class="col-sm-11 col-10">
-                                                    <p>Name of Teacher</p>                                         
+                                                    <p>Name of Teachers</p>                                         
                                                 </div>
                                             </div>
 
@@ -128,8 +128,8 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
                                                         // Assign and Edit Buttons
                                                         echo '<div class="col-2">';
-                                                        echo "<input class='btn btn-warning mx-2 p-0 px-2' type='button' value='Assign' onclick='assignFunction({$rowNumber})'>";
-                                                        echo "<input class='btn btn-primary p-0 px-2' type='button' value='Edit' onclick='editFunction({$rowNumber})'>";
+                                                        echo "<input class='btn btn-primary p-0 px-2' type='button' value='View' onclick='editFunction(\"{$row['t_id']}\")'>";
+                                                        echo "<input class='btn btn-warning mx-2 p-0 px-2' type='button' value='Assign' onclick='assignFunction(\"{$row['t_id']}\")'>";
                                                         echo '</div>';
 
                                                         echo '</div>';
@@ -151,30 +151,24 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     </div>
                 </div>
             </div>
-
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>
     <script>
         function assignFunction(tid) {
-            var dataTid = document.querySelector(`.teacher-row[data-tid="T-${tid}"]`).getAttribute('data-tid');
-            
-            // Redirect to "assignMentee.php" with data-tid as a GET variable
-            window.location.href = `assignMentee.php?tid=${dataTid}`;
+            // Construct the URL with the GET variable
+            var redirectURL = "assignMentee.php?tid=" + tid;
+
+            // Redirect to the constructed URL
+            window.location.href = redirectURL;
         }
 
         function editFunction(tid) {
-            var dataTid = document.querySelector(`.teacher-row[data-tid="T-${tid}"]`).getAttribute('data-tid');
-            
-            // Redirect to "assignMentee.php" with data-tid as a GET variable
-            window.location.href = `viewMentee.php?tid=${dataTid}`;
+            // Construct the URL with the GET variable
+            var redirectURL = "viewMentee.php?tid=" + tid;
+
+            // Redirect to the constructed URL
+            window.location.href = redirectURL;
         }
     </script>
 </body>

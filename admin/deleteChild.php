@@ -9,11 +9,9 @@ if (!$conn) {
 
 // Check if the selectedItems are received
 if (isset($_POST['selectedItems']) && is_array($_POST['selectedItems'])) {
-    print_r($_POST['selectedItems']);
 
     foreach ($_POST['selectedItems'] as $ChildID) {
         $escapedChildID = mysqli_real_escape_string($conn, $ChildID);
-
 
         // Retrieve the filename of the profile picture
         $filenameQuery = "SELECT c_profilePicture FROM children WHERE c_id='$escapedChildID'";

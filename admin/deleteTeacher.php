@@ -9,7 +9,6 @@ if (!$conn) {
 
 // Check if the selectedItems are received
 if (isset($_POST['selectedItems']) && is_array($_POST['selectedItems'])) {
-    print_r($_POST['selectedItems']);
 
     foreach ($_POST['selectedItems'] as $teacherId) {
         $escapedTeacherId = mysqli_real_escape_string($conn, $teacherId);
@@ -26,12 +25,12 @@ if (isset($_POST['selectedItems']) && is_array($_POST['selectedItems'])) {
             $profilePicturePath = "../data/img/teacher/" . $profilePictureFilename;
             if (file_exists($profilePicturePath)) {
                 unlink($profilePicturePath);
-                echo "Profile picture for $escapedTeacherId deleted successfully.\n";
+                // echo "Profile picture for $escapedTeacherId deleted successfully.\n";
             } else {
-                echo "Profile picture for $escapedTeacherId not found.\n";
+                // echo "Profile picture for $escapedTeacherId not found.\n";
             }
         } else {
-            echo "Error retrieving profile picture filename for $escapedTeacherId: " . mysqli_error($conn) . "\n";
+            // echo "Error retrieving profile picture filename for $escapedTeacherId: " . mysqli_error($conn) . "\n";
         }
 
         // Delete the record from the database
@@ -40,8 +39,13 @@ if (isset($_POST['selectedItems']) && is_array($_POST['selectedItems'])) {
             // Success, you can handle the response if needed
             echo "Record for Teacher ID $escapedTeacherId deleted successfully.\n";
         } else {
-            // Error, you can handle the error response
-            echo "Error deleting record for Teacher ID $escapedTeacherId: " . mysqli_error($conn) . "\n";
+            // Check if the error is due to a foreign key constraint
+            if (mysqli_errno($conn) == 1451) {
+                echo "Error deleting record for Teacher ID $escapedTeacherId: There are mentees assigned to this teacher. Please remove the assigned mentees first.\n";
+            } else {
+                // Other database error
+                echo "Error deleting record for Teacher ID $escapedTeacherId: " . mysqli_error($conn) . "\n";
+            }
         }
     }
 } else {

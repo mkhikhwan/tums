@@ -41,7 +41,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Profile</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
@@ -62,7 +62,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     <div class="container-fluid header"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
                         <i class="fas fa-bars"></i></button>
                         <label class="form-label fs-3 text-nowrap" id="label_welcome">
-                            <br><h4>My Profile : <span><?= $user_data['c_name'] ?></span></h4></label>
+                            <br><h4>Welcome <span><?= $user_data['c_name'] ?></span> !</h4></label>
                     </div>
                 </nav>
 
@@ -81,7 +81,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
                                                 <!-- Profile Picture Column (Left) -->
                                                 <div class="col-md-3 d-flex justify-content-center align-items-center">
-                                                    <img src="../assets/img/male-placeholder-image.jpeg" alt="Profile Picture" class="picture rounded-circle">
+                                                    <img src="../data/img/children/<?= $user_data['c_profilePicture'] ?>" alt="Profile Picture" class="picture rounded-circle" style="width:150px; height:150px; object-fit:cover;">
                                                 </div>
     
     
@@ -168,7 +168,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                             <!-- Bootstrap carousel -->
                                             <!-- Ikhwan 31 Dec -->
                                             <div class="row text-center p-2">
-                                                    <h4>TIMETABLES</h4>
+                                                    <h4>Timetables</h4>
                                                 </div>
                                                 <div class="row p-2">
                                                     <!-- CAROUSEL FOR TIMETABLES -->
@@ -177,22 +177,12 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                           <div class="carousel-item active">
                                                             <img src="..\assets\img\timetables\jadual1.jpg" class="d-block w-100" alt="...">
                                                           </div>
-                                                          <?php if ($user_data['c_program'] == "Under Age 1" || $user_data['c_program'] == "Age 2"): ?>
-                                                            <div class="carousel-item active">
-                                                                <img src="..\assets\img\timetables\jadual2.jpg" class="d-block w-100" alt="...">
-                                                            </div>
-                                                          <?php endif; ?> <!-- Alex 11.1.24 - Add function to detect teacher program and display schedule onl related to the program -->
-                                                          <!-- <div class="carousel-item">
+                                                          <div class="carousel-item">
                                                             <img src="..\assets\img\timetables\jadual2.jpg" class="d-block w-100" alt="...">
-                                                          </div> -->
-                                                          <?php if ($user_data['c_program'] == "Age 3" || $user_data['c_program'] == "Age 4"): ?>
-                                                            <div class="carousel-item active">
-                                                                <img src="..\assets\img\timetables\jadual3.jpg" class="d-block w-100" alt="...">
-                                                            </div>
-                                                          <?php endif; ?> <!-- Alex 11.1.24 - Add function to detect teacher program and display schedule onl related to the program -->
-                                                          <!-- <div class="carousel-item"> 
+                                                          </div>
+                                                          <div class="carousel-item">
                                                             <img src="..\assets\img\timetables\jadual3.jpg" class="d-block w-100" alt="...">
-                                                          </div> -->
+                                                          </div>
                                                           <div class="carousel-item">
                                                             <img src="..\assets\img\timetables\jadual4.jpg" class="d-block w-100" alt="...">
                                                           </div>
@@ -214,7 +204,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                             <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
                                                             <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
                                                             <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 3"></button>
-                                                            <!-- <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4" aria-label="Slide 3"></button> -->
+                                                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4" aria-label="Slide 3"></button>
                                                         </div>
                                                     </div>
 
@@ -227,13 +217,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     </div>
                 </div>
             </div>
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>

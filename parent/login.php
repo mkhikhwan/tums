@@ -33,7 +33,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         } else {
             // login failed - display an error message
-            echo '<script>alert("Invalid username or password!")</script>';
+            // echo '<script>alert("Invalid username or password!")</script>';
+            $_SESSION['error'] = "Invalid username or password!";
+            header('Location: login.php');
+            exit();
         }
     }
 }
@@ -78,7 +81,7 @@ function test_input($data) {
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-md-12 text-center justify-content-center align-items-center">
-                                        <p>Welcome Parent</p>
+                                        <p>Welcome Parent !</p>
                                 </div>
                             
                                 <form method="POST">
@@ -99,7 +102,10 @@ function test_input($data) {
 
                                 <?php
                                     if (isset($_SESSION['error'])) {
-                                        echo '<div class="alert alert-warning">' . $_SESSION['error'] . '</div>';
+                                        echo '<div class="alert alert-warning">';
+                                        echo $_SESSION['error'];
+                                        echo ' <a href="#" id="forgotPassword">Forgot your password?</a>';
+                                        echo '</div>';
                                         unset($_SESSION['error']);
                                     }
                                 ?>
@@ -137,5 +143,8 @@ function test_input($data) {
     
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
+    <!-- <script src="../assets/bootstrap/js/bootstrap.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="../assets/js/login.js"></script>
 </body>
 </html>

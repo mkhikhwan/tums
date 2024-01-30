@@ -9,7 +9,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     }
 
     // display all children names
-    $query = "SELECT c_name, c_id FROM children";
+    $query = "SELECT c_name, c_id FROM children ORDER BY CAST(SUBSTRING(c_id, 3) AS SIGNED) ASC";
     $result = mysqli_query($conn, $query);
 
     if (!$result) {
@@ -39,7 +39,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>View Profile</title>
+    <title>Manage Children</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hammersmith+One&amp;display=swap">
     <link rel="stylesheet" href="../assets/fonts/fontawesome-all.min.css">
@@ -66,14 +66,29 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
                 <!-- MAIN CONTENT -->
                 <div class="container-fluid">
+                    <div class="row px-2">
+                        <?php
+                            // Display message if set
+                            if (isset($_SESSION['message'])) {
+                                echo '
+                                <div class="alert alert-' . ($_SESSION['message_type'] ?? 'info') . ' alert-dismissible fade show" role="alert">
+                                    ' . $_SESSION['message'] . '
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>';
+                                unset($_SESSION['message']); // Clear the session variable
+                                unset($_SESSION['message_type']); // Clear the session variable
+                            }
+                        ?>
+                    </div>
+
                     <div class="row">
                         <div class="col-12 mb-2">
-                            <a href='registerChildren.php' class="btn btn-primary">Register New Child</a>
+                            <a href='registerChildren.php' class="btn btn-primary">Register New Children</a>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12 mb-2">
-                            <input type="text" id='searchInput' class="form-control" placeholder="Search by name">
+                            <input type="text" id='searchInput' class="form-control" placeholder="Search Children Name">
                         </div>
                     </div>
 
@@ -87,11 +102,11 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                                                 <div class="col-2">No.</div>
                                                 <div class="col-6">Name of Children</div>
                                                 <div class="col-2"></div>
-                                                <div class="col-2 d-flex justify-content-end align-items-center"><button id="select-all" class="btn btn-primary p-1 m-0">Select All</button></div>
+                                                <div class="col-2 justify-content-end align-items-center d-flex"><button id="select-all" class="btn btn-primary p-1 m-0">Select All</button></div>
                                             </div>
                                             
                                             <?php foreach ($item_data as $index => $child): ?>
-                                                <div class="row m-0 mt-1 white_box" data-id="<?= $child['c_id'] ?>">
+                                                <div class="row m-0 mt-1 white_box" data-id="<?= $child['c_id'] ?>" data-name="<?= $child['c_name'] ?>">
                                                     <div class="col-2"><?= $index + 1 ?></div>
                                                     <div class="col-7"><?= $child['c_name'] ?></div>
                                                     <div class="col-3 d-inline-flex justify-content-end align-items-center">
@@ -115,13 +130,6 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     </div>
                 </div>
             </div>
-            <div style="padding-top: 5rem;"></div> <!-- Alex: 26/12/23 Add empty space between footer-->
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2023</span></div>
-                </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../assets/js/theme.js"></script>
@@ -129,14 +137,16 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
     <script>
         $(document).ready(function() {
+
+
             $('#searchInput').on('input', function() {
                 var searchValue = String($(this).val()).toLowerCase();
         
                 $('.white_box').each(function() {
-                var childid = String($(this).data('id')).toLowerCase();
+                var childname = String($(this).data('name')).toLowerCase();
                 
                 //Hide div that doesnt have similar data-tag   
-                if (childid.includes(searchValue)) {
+                if (childname.includes(searchValue)) {
                     $(this).show();
                 } else {
                     $(this).hide();
@@ -158,6 +168,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
                 // Show a confirmation box
                 var confirmation = confirm('Are you sure you want to delete the selected items?');
+                // console.log(selectedItems);
 
                 // If the user confirms
                 if (confirmation) {
@@ -168,11 +179,13 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                         data: { selectedItems: selectedItems },
                         success: function(response) {
                             alert("Selected items deleted successfully.");
-                            console.log(response);
-                            // location.reload();
+                            // console.log(response);
+                            location.reload();
                         },
-                        error: function(error) {
-                            alert("Error deleting selected items.");
+                        error: function(xhr, status, error) {
+                            var errorMessage = "Error deleting selected items. Status: " + status + ", Error: " + error;
+                            alert(errorMessage);
+                            console.error(errorMessage);
                         }
                     });
                 }
@@ -199,6 +212,14 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
                 // Redirect to editChildren.php with the c_id parameter
                 window.location.href = 'viewChildren.php?id=' + c_id;
+            });
+
+            $("#select-all").on("click", function(){
+                // Check if any checkbox is already checked
+                var anyChecked = $(".white_box input[type='checkbox']:checked").length > 0;
+
+                // Toggle checkbox states
+                $(".white_box input[type='checkbox']").prop("checked", !anyChecked);
             });
         });
     </script>

@@ -149,6 +149,7 @@ if (file_exists($folderPath . $filename)) {
     $jsonContent = file_get_contents($folderPath . $filename);
     $data = json_decode($jsonContent, true);
     $_SESSION['invoice'] = $data;
+    $email = $data['email'];
 
     // Update fee/item status to paid
     // By: Alex / Ikhwan
@@ -161,8 +162,15 @@ if (file_exists($folderPath . $filename)) {
 
     if ($paymentStatusSuccess && $invoice_id) {
         echo "Payment was Successful. Redirecting...\n";
+
+        // Send invoice to email
+        require_once '../../generateInvoice.php';
+        // require_once '../../phpmailer_load.php';
+        // $invoicePDF = generatePDFReceipt($conn, $invoice_id);
+        // sendInvoice($email, $invoicePDF);
+
         $_SESSION['invoice_id'] = $invoice_id;
-        
+
         // Redirect to success.php
         header("Location: ../success.php");
         exit(); // Ensure that no further output is sent

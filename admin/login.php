@@ -74,7 +74,7 @@ function test_input($data) {
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-md-12 text-center justify-content-center align-items-center">
-                                        <p>Welcome Admin</p>
+                                        <p>Welcome Admin !</p>
                                 </div>
                             
                                 <form method="POST">
